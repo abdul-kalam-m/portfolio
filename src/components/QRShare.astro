@@ -1,0 +1,192 @@
+---
+import { qrSvgForPath, inlineQr } from '../lib/qr';
+import { absoluteUrl } from '../lib/site';
+
+/**
+ * QR + copy-link block (§9.2). "Share" reveals the code; the copy button copies the
+ * canonical URL. Both are generated at build time — no runtime QR library ships.
+ *
+ * §5 of the QR rules: because entry via QR skips the home page, this block sits on every
+ * project page alongside the byline and footer contact.
+ */
+
+interface Props {
+  /** Site-relative path this code should encode. */
+  path: string;
+  /** Slug used for the downloadable file name. */
+  slug: string;
+  label?: string;
+}
+
+const { path, slug, label = 'Share this page' } = Astro.props;
+
+const svg = inlineQr(await qrSvgForPath(path));
+const url = absoluteUrl(path);
+---
+
+<section class="qr-share surface-card" aria-labelledby={`qr-heading-${slug}`}>
+  <div class="head">
+    <h2 class="heading" id={`qr-heading-${slug}`}>{label}</h2>
+    <p class="url tnum">{url}</p>
+  </div>
+
+  <div class="actions">
+    <button
+      class="btn"
+      type="button"
+      data-qr-toggle
+      aria-expanded="false"
+      aria-controls={`qr-panel-${slug}`}
+    >
+      Show QR code
+    </button>
+    <button class="btn" type="button" data-copy-link data-url={url}>
+      <span data-copy-label>Copy link</span>
+    </button>
+    <span class="status" role="status" data-copy-status></span>
+  </div>
+
+  {
+    /*
+    Not `hidden`: without JS the reveal control never binds, so the code must already be
+    on screen. The collapsed state is applied by CSS only when the pre-paint script has
+    marked the document as JS-capable, so there is no flash for anyone.
+  */
+  }
+  <div class="panel" id={`qr-panel-${slug}`} data-open="false">
+    <div class="qr" set:html={svg} />
+    <p class="qr-note">
+      Scan to open this page. <a href={`/qr/${slug}.svg`} download={`qr-${slug}.svg`}>
+        Download the SVG</a
+      > for print.
+    </p>
+  </div>
+</section>
+
+<style>
+  .qr-share {
+    margin-top: var(--space-12);
+    padding: var(--space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .heading {
+    font-size: var(--text-lg);
+  }
+
+  .url {
+    margin-top: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    color: var(--color-text-muted);
+    overflow-wrap: anywhere;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .btn {
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+    color: var(--color-text);
+    font: inherit;
+    font-size: var(--text-sm);
+    font-weight: 560;
+    cursor: pointer;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .status {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .panel {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-4);
+  }
+
+  :global(html.js) .panel[data-open='false'] {
+    display: none;
+  }
+
+  /*
+   * The code keeps its own white plate in both themes — re-theming a QR breaks the
+   * contrast a scanner depends on (§9.4).
+   */
+  .qr {
+    width: 160px;
+    padding: var(--space-2);
+    background-color: #ffffff;
+    border-radius: var(--radius-sm);
+  }
+
+  .qr :global(svg) {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
+
+  .qr-note {
+    flex: 1;
+    min-width: 12rem;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  /* No JS: neither control can work, so hide them rather than show dead buttons. */
+  :global(html:not(.js)) .actions {
+    display: none;
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('.qr-share').forEach((root) => {
+    const toggle = root.querySelector<HTMLButtonElement>('[data-qr-toggle]');
+    const panel = root.querySelector<HTMLElement>('.panel');
+    const copy = root.querySelector<HTMLButtonElement>('[data-copy-link]');
+    const status = root.querySelector<HTMLElement>('[data-copy-status]');
+
+    if (toggle && panel) {
+      toggle.addEventListener('click', () => {
+        const open = toggle.getAttribute('aria-expanded') === 'true';
+        toggle.setAttribute('aria-expanded', String(!open));
+        toggle.textContent = open ? 'Show QR code' : 'Hide QR code';
+        panel.dataset.open = String(!open);
+      });
+    }
+
+    if (copy) {
+      copy.addEventListener('click', async () => {
+        const url = copy.dataset.url ?? '';
+        try {
+          await navigator.clipboard.writeText(url);
+          if (status) status.textContent = 'Link copied.';
+        } catch {
+          if (status) status.textContent = 'Copy failed — select the URL above.';
+        }
+        window.setTimeout(() => {
+          if (status) status.textContent = '';
+        }, 4000);
+      });
+    }
+  });
+</script>

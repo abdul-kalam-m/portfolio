@@ -1,0 +1,73 @@
+---
+/**
+ * "Technical detail" disclosure (§3.3): method detail goes under progressive disclosure
+ * rather than being cut. Native <details> — keyboard-operable with no JS.
+ */
+
+interface Props {
+  summary?: string;
+  open?: boolean;
+}
+
+const { summary = 'Technical detail', open = false } = Astro.props;
+---
+
+<details class="details" open={open}>
+  <summary>{summary}</summary>
+  <div class="content">
+    <slot />
+  </div>
+</details>
+
+<style>
+  .details {
+    margin: var(--space-6) 0;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface-2);
+  }
+
+  summary {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    cursor: pointer;
+    font-size: var(--text-sm);
+    font-weight: 620;
+    color: var(--color-text);
+    list-style: none;
+  }
+
+  summary::-webkit-details-marker {
+    display: none;
+  }
+
+  summary::before {
+    content: '';
+    width: 0;
+    height: 0;
+    border-left: 6px solid currentColor;
+    border-block: 4px solid transparent;
+    transition: transform var(--duration-fast) var(--ease-standard);
+  }
+
+  .details[open] summary::before {
+    transform: rotate(90deg);
+  }
+
+  summary:hover {
+    color: var(--color-accent);
+  }
+
+  .content {
+    padding: 0 var(--space-4) var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .content :global(> * + *) {
+    margin-top: var(--space-3);
+  }
+</style>

@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 528" width="1000" height="528" role="img" aria-label="How does a pile of municipal PDFs become a jurisdiction scorecard with no backend?">
+<style>
+  .box { fill: #ffffff; stroke: #8a857b; stroke-width: 1; }
+  .box-label { fill: #171614; font: 600 13px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; }
+  .box-detail { fill: #57534b; font: 400 11px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; }
+  .lane-name { fill: #171614; font: 620 12px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+  .lane-note { fill: #57534b; font: 400 11px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; }
+  .arrow { stroke: #0a6c74; stroke-width: 1.5; }
+  .arrow-head { fill: #0a6c74; }
+</style>
+<rect width="1000" height="528" fill="#fbfaf8"/>
+<text x="28" y="40" class="lane-name">Batch pipeline</text>
+<text x="28" y="54" class="lane-note">Python, weekly via Actions</text>
+<rect x="28" y="66" width="306.7" height="52" rx="6" class="box"/>
+<text x="40" y="88" class="box-label">Permit ETL</text>
+<text x="40" y="106" class="box-detail">Socrata/CKAN open-data portals</text>
+<rect x="346.6666666666667" y="66" width="306.7" height="52" rx="6" class="box"/>
+<text x="358.6666666666667" y="88" class="box-label">LLM extraction</text>
+<text x="358.6666666666667" y="106" class="box-detail">board minutes → structured actions</text>
+<rect x="665.3333333333334" y="66" width="306.7" height="52" rx="6" class="box"/>
+<text x="677.3333333333334" y="88" class="box-label">Gold-set eval</text>
+<text x="677.3333333333334" y="106" class="box-detail">gates publication on measured precision</text>
+<line x1="500" y1="128" x2="500" y2="144" class="arrow"/>
+<path d="M 495 142 L 500 150 L 505 142 Z" class="arrow-head"/>
+<text x="28" y="170" class="lane-name">Working store</text>
+<rect x="28" y="188" width="944.0" height="52" rx="6" class="box"/>
+<text x="40" y="210" class="box-label">DuckDB</text>
+<text x="40" y="228" class="box-detail">benchmarks, crosswalks, rule engine inputs</text>
+<line x1="500" y1="250" x2="500" y2="266" class="arrow"/>
+<path d="M 495 264 L 500 272 L 505 264 Z" class="arrow-head"/>
+<text x="28" y="292" class="lane-name">Committed artifacts</text>
+<text x="28" y="306" class="lane-note">each file ≤ 500 KB</text>
+<rect x="28" y="318" width="306.7" height="52" rx="6" class="box"/>
+<text x="40" y="340" class="box-label">scorecards/*.json</text>
+<rect x="346.6666666666667" y="318" width="306.7" height="52" rx="6" class="box"/>
+<text x="358.6666666666667" y="340" class="box-label">playbooks/*.json</text>
+<rect x="665.3333333333334" y="318" width="306.7" height="52" rx="6" class="box"/>
+<text x="677.3333333333334" y="340" class="box-label">signals.json · alerts.json · meta.json</text>
+<line x1="500" y1="380" x2="500" y2="396" class="arrow"/>
+<path d="M 495 394 L 500 402 L 505 394 Z" class="arrow-head"/>
+<text x="28" y="422" class="lane-name">Static app</text>
+<text x="28" y="436" class="lane-note">no server, no runtime API calls</text>
+<rect x="28" y="448" width="944.0" height="52" rx="6" class="box"/>
+<text x="40" y="470" class="box-label">Vite + React + Tailwind</text>
+<text x="40" y="488" class="box-detail">Cloudflare Pages</text>
+</svg>

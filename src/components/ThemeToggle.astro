@@ -1,0 +1,135 @@
+---
+/**
+ * Theme toggle (§5.1). Cycles light → dark → system.
+ *
+ * The pre-paint script lives in BaseLayout so the attribute is set before first paint;
+ * this component only owns the control. Without JS the page still themes correctly via
+ * `prefers-color-scheme` in tokens.css — the control simply hides itself.
+ */
+---
+
+<button
+  id="theme-toggle"
+  class="theme-toggle hit-target"
+  type="button"
+  aria-live="polite"
+  data-label-light="Theme: light. Switch to dark."
+  data-label-dark="Theme: dark. Switch to system."
+  data-label-system="Theme: system. Switch to light."
+>
+  <svg class="icon icon-light" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <circle cx="12" cy="12" r="4.2"></circle>
+    <path
+      d="M12 2.6v2.6M12 18.8v2.6M2.6 12h2.6M18.8 12h2.6M5.4 5.4l1.9 1.9M16.7 16.7l1.9 1.9M18.6 5.4l-1.9 1.9M7.3 16.7l-1.9 1.9"
+    ></path>
+  </svg>
+  <svg class="icon icon-dark" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <path d="M20 14.4A8.6 8.6 0 0 1 9.6 4a8.6 8.6 0 1 0 10.4 10.4z"></path>
+  </svg>
+  <svg class="icon icon-system" viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+    <rect x="2.8" y="4.4" width="18.4" height="12.4" rx="1.6"></rect>
+    <path d="M8.4 20.2h7.2"></path>
+  </svg>
+  <span class="sr-only" id="theme-toggle-label">Theme</span>
+</button>
+
+<style>
+  .theme-toggle {
+    padding: var(--space-2);
+    background: none;
+    border: 1px solid transparent;
+    border-radius: var(--radius-card);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition:
+      color var(--duration-fast) var(--ease-standard),
+      border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .theme-toggle:hover {
+    color: var(--color-text);
+    border-color: var(--color-border);
+  }
+
+  /* No JS means no toggle: prefers-color-scheme already handles theming. */
+  html:not(.js) .theme-toggle {
+    display: none;
+  }
+
+  .icon {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+  }
+
+  .icon-dark,
+  .icon-system {
+    display: none;
+  }
+
+  :global(html[data-theme-mode='dark']) .icon-light,
+  :global(html[data-theme-mode='system']) .icon-light {
+    display: none;
+  }
+
+  :global(html[data-theme-mode='dark']) .icon-dark {
+    display: block;
+  }
+
+  :global(html[data-theme-mode='system']) .icon-system {
+    display: block;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip-path: inset(50%);
+    white-space: nowrap;
+    border: 0;
+  }
+</style>
+
+<script>
+  const MODES = ['light', 'dark', 'system'] as const;
+  type Mode = (typeof MODES)[number];
+
+  const button = document.getElementById('theme-toggle');
+  if (button) {
+    const applyLabel = (mode: Mode) => {
+      const label = button.dataset[`label${mode[0]!.toUpperCase()}${mode.slice(1)}`];
+      if (label) button.setAttribute('aria-label', label);
+    };
+
+    const setMode = (mode: Mode) => {
+      const root = document.documentElement;
+      root.dataset.themeMode = mode;
+      if (mode === 'system') {
+        delete root.dataset.theme;
+      } else {
+        root.dataset.theme = mode;
+      }
+      try {
+        localStorage.setItem('theme', mode);
+      } catch {
+        /* Private mode: the choice simply does not persist. */
+      }
+      applyLabel(mode);
+    };
+
+    const current = (document.documentElement.dataset.themeMode ?? 'system') as Mode;
+    applyLabel(current);
+
+    button.addEventListener('click', () => {
+      const mode = (document.documentElement.dataset.themeMode ?? 'system') as Mode;
+      setMode(MODES[(MODES.indexOf(mode) + 1) % MODES.length]!);
+    });
+  }
+</script>

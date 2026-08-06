@@ -1,0 +1,121 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { OWNER, RESUME } from '../lib/site';
+
+/** No contact form in v1 (§2.1) — a mailto and three links beat a form that silently fails. */
+
+const channels = [
+  {
+    label: 'Email',
+    value: OWNER.email,
+    href: `mailto:${OWNER.email}`,
+    note: 'Best for anything substantive. I read everything.',
+  },
+  {
+    label: 'LinkedIn',
+    value: OWNER.linkedin.replace('https://www.', ''),
+    href: OWNER.linkedin,
+    note: 'For recruiters and introductions.',
+  },
+  {
+    label: 'GitHub',
+    value: OWNER.github.replace('https://', ''),
+    href: OWNER.github,
+    note: 'Source for everything on this site that has source.',
+  },
+  {
+    label: 'Location',
+    value: OWNER.location,
+    href: null,
+    note: 'Open to remote and to roles in the New York–New Jersey region.',
+  },
+];
+---
+
+<BaseLayout
+  title="Contact"
+  description="Email, LinkedIn, and GitHub for Abdul Kalam — geospatial data analyst and urban planner based in New Brunswick, New Jersey."
+  path="/contact/"
+  image="/og/contact.png"
+>
+  <PageHeader
+    eyebrow="Contact"
+    title="Get in touch"
+    lead="If you are hiring for spatial analysis, climate resilience, or data engineering work, the fastest route is email. I usually reply within a day or two."
+  />
+
+  <div class="container-page body">
+    <ul class="channels">
+      {
+        channels.map((channel) => (
+          <li class="channel surface-card">
+            <p class="eyebrow">{channel.label}</p>
+            <p class="value">
+              {channel.href ? (
+                <a
+                  href={channel.href}
+                  rel={channel.href.startsWith('http') ? 'me noopener' : undefined}
+                >
+                  {channel.value}
+                </a>
+              ) : (
+                channel.value
+              )}
+            </p>
+            <p class="note">{channel.note}</p>
+          </li>
+        ))
+      }
+    </ul>
+
+    <p class="resume-line">
+      Looking for the short version? <a href="/resume/">Résumé</a> ·
+      <a href={RESUME.href} download>download the PDF</a>.
+    </p>
+  </div>
+</BaseLayout>
+
+<style>
+  .body {
+    padding-block: var(--space-12);
+  }
+
+  .channels {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .channels {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .channel {
+    padding: var(--space-5);
+  }
+
+  .value {
+    margin-top: var(--space-2);
+    font-size: var(--text-lg);
+    overflow-wrap: anywhere;
+  }
+
+  .note {
+    margin-top: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .resume-line {
+    margin-top: var(--space-10);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

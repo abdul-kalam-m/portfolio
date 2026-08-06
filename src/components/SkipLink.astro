@@ -1,0 +1,31 @@
+---
+/**
+ * The first focusable element on every page (§5.1).
+ * Visually hidden until focused, then pinned to the top-left.
+ */
+---
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<style>
+  .skip-link {
+    position: absolute;
+    inset-inline-start: var(--spacing);
+    inset-block-start: var(--spacing);
+    z-index: 100;
+    padding: var(--space-2) var(--space-4);
+    background-color: var(--color-accent);
+    color: var(--color-accent-contrast);
+    border-radius: var(--radius-card);
+    font-size: var(--text-sm);
+    font-weight: 600;
+    text-decoration: none;
+    transform: translateY(calc(-100% - var(--space-4)));
+    transition: transform var(--duration-fast) var(--ease-standard);
+  }
+
+  .skip-link:focus-visible {
+    transform: translateY(0);
+    color: var(--color-accent-contrast);
+  }
+</style>

@@ -1,0 +1,71 @@
+---
+title: NJ Parcel Flood Risk Dashboard
+hook: Flood exposure for 3.4M New Jersey parcels, scored 0–100 and served with no backend.
+section: geospatial
+tier: gallery
+year: 2026
+status: planned
+order: 10
+tags:
+  - flood
+  - gis
+  - data-pipeline
+  - housing
+  - python
+alsoIn:
+  - data-ai
+plannedNote: >-
+  The build guide, source spec, and pipeline design are complete and committed; no code
+  has been written and no data has been processed. Every figure below describes scope, not
+  a result.
+stats:
+  - value: '3.4M'
+    label: Parcels in scope
+    scope: true
+  - value: '21'
+    label: Counties targeted
+    scope: true
+  - value: '564'
+    label: Municipalities targeted
+    scope: true
+  - value: '≤ 12 h'
+    label: Statewide intersect budget
+    scope: true
+thumbnail: ../../assets/projects/nj-parcel-flood-risk/thumbnail.png
+thumbnailAlt: Architecture diagram of the NJ Parcel Flood Risk pipeline — a county-partitioned Python ETL feeding published PMTiles and Parquet artifacts, which a static MapLibre app reads directly.
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+{/* DRAFT: owner review — written from the project's committed build guide §1, §5, §6. */}
+
+## What this is
+
+A statewide dashboard joining New Jersey's MOD-IV tax-assessment records to parcel
+geometry, intersecting every parcel with current FEMA flood layers and future
+climate/sea-level-rise layers, and scoring each 0–100 with its drivers visible. The
+audience is underwriting and portfolio review: search by address or PAMS PIN, filter by
+county and municipality, and read exposure by property class as **both** a parcel count
+and an assessed-value total.
+
+It extends [GeoFloodFin](https://github.com/abdul-kalam-m) — five cities, 203 tracts — to
+the whole state at parcel grain. The narrative hook is the productisation: the same
+analytical question, asked at a scale where the engineering is the hard part.
+
+<ArchitectureDiagram slug="nj-parcel-flood-risk" />
+
+## Design decisions already locked
+
+The whole thing is **precompute-everything**: no server, no runtime geoprocessing. Heavy
+intersection runs locally, partitioned by county and resumable so a failure never
+restarts finished work. What ships is tiles, Parquet, and small JSON summaries on object
+storage, read directly by a static app.
+
+Two rules are non-negotiable in the guide. No owner names or mailing addresses appear in
+any published artifact. And NFIP loss evidence is aggregated to census tract, never to
+parcel — the redacted claims dataset does not support parcel-level precision, and
+pretending otherwise would be both wrong and a privacy failure.
+
+Publication gates are written before the first line of code: MOD-IV join rate ≥ 97%
+statewide, county parcel counts within ±2% of source, geometry validity 100% after
+repair.

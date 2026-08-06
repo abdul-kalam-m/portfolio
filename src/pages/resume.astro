@@ -1,0 +1,282 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { OWNER, RESUME } from '../lib/site';
+
+/*
+  DRAFT: owner review — transcribed verbatim from
+  "Analyst Resume_Abdul Kalam (2-Page).pdf". §13.5.7 locks résumé content: nothing here
+  may be embellished, and figures are reproduced exactly as the PDF states them.
+
+  Planner and Transportation Planner variants of the résumé also exist; swapping which one
+  the site features is a one-line change in src/lib/site.ts plus the file in public/files/.
+*/
+
+const experience = [
+  {
+    org: 'Rutgers Center on Law, Inequality, and Metropolitan Equity (CLiME)',
+    where: 'New Jersey',
+    role: 'Geospatial Research Assistant',
+    period: 'January 2025 – present',
+    points: [
+      'Conducts spatial research on housing affordability and rent-burdened populations in New Jersey using ArcGIS and Python.',
+      'Automated data pipelines for extracting and transforming housing certificates of occupancy, building permits, and population demographics.',
+      'Applied automation and geospatial techniques to improve the efficiency, accuracy, and scalability of the analysis process.',
+      'Generated detailed reports for publication, highlighting affordability challenges and their policy implications.',
+    ],
+  },
+  {
+    org: 'Sponge Collaborative',
+    where: 'India',
+    role: 'Geospatial and Climate Change Analyst',
+    period: 'January 2023 – July 2024',
+    points: [
+      "Led hydrological GIS modeling for Chennai's flood resilience using ArcGIS, QGIS, and SWMM.",
+      'Developed GIS-based processing tools for high-resolution urban flood risk mapping, integrating land use / land cover, building footprints, drainage networks, topography, and groundwater recharge potential.',
+      'Conducted spatial and environmental data analysis for a 360-acre neighborhood, enhancing groundwater infiltration by 13%.',
+      'Designed flood mitigation strategies that improved resilience from 2-year to 5-year return-period floods across a 180-acre flood-prone region.',
+      'Co-authored the Sponge Park Handbook, guiding the prioritization of 1,000 sponge parks through a spatial modeling framework.',
+      'Conducted carbon sequestration analysis with TU Berlin, quantifying 103.3 tons of CO₂ storage potential using the MRV system.',
+      'Built multi-scalar geospatial models for stormwater storage and groundwater recharge prediction.',
+    ],
+  },
+];
+
+const projects = [
+  {
+    name: 'Flood Vulnerability Mapping, Woodbridge Township, New Jersey',
+    points: [
+      'Developed GIS-based risk assessment models identifying flood-prone residential zones in ArcGIS.',
+      'Identified 163 land parcels in danger of future flooding from sea-level rise and inundation.',
+      'Mapped 93.8% of critical wetlands under extreme commercial and residential development pressure.',
+    ],
+  },
+  {
+    name: 'Sponge Park Framework for Resilient Open Spaces',
+    points: [
+      'Co-authored a comprehensive handbook guiding decision-makers implementing sponge parks on a ₹250 crore budget.',
+      'Developed geospatial models in ArcGIS identifying 1,000 sponge parks on ecological, social, and financial criteria.',
+      'Quantified the impact of blue-green infrastructure with SWMM, finding a 2–3× increase in soil storage capacity and 15% reduced runoff.',
+      'Conducted cost-benefit analysis identifying 42% NPV comparing green against grey infrastructure for 5- and 25-year return-period storms.',
+    ],
+  },
+  {
+    name: 'NEBDHub & NSDC Transportation Data Science Project',
+    points: [
+      'Analyzed NYC OpenData transportation data covering 2012 to 2024 to understand crash patterns.',
+      'Completed six milestones in Python, including data cleaning and time-series analysis.',
+      'Identified 11 high-risk intersections for targeted safety improvements, with recommendations to NYCDOT.',
+    ],
+  },
+];
+
+const education = [
+  {
+    school: 'Rutgers University',
+    period: 'Expected',
+    lines: [
+      'Master of Public Informatics — GIS and spatial data analysis',
+      'Master of City Planning — environmental and climate change planning',
+    ],
+  },
+  {
+    school: 'Anna University',
+    period: '2016–2021',
+    lines: ['Bachelor of Architecture — architecture and urban design'],
+  },
+];
+
+const honors = [
+  'Winner, Chennai Lakefront Rejuvenation Competition, CMDA (2023)',
+  'Nominated, National Awards for Excellence in Architectural Thesis, Council of Architecture (2022)',
+  'Nominated, JK AYA Best Architecture Student of the Year Award, JK Cement (2022)',
+  'Nominated, Thesis of the Year Awards, ARCASIA (2021)',
+  'Finalist, Telangana State Urban Center of Excellence, NIUA (2021)',
+  'Licensed Architect, Council of Architecture, India — CA/2023/158480',
+];
+---
+
+<BaseLayout
+  title="Résumé"
+  description="Geospatial data analyst and urban planner: climate resilience, risk modeling, and GIS-based hazard assessment. Full résumé with a downloadable PDF."
+  path="/resume/"
+  image="/og/resume.png"
+>
+  <PageHeader
+    eyebrow="Résumé"
+    title="Geospatial data analyst and urbanist"
+    lead="Climate resilience, risk modeling, and GIS-based spatial and hazard assessment, with a working specialization in spatial analytics, Python, and machine learning for geospatial data."
+  >
+    <p class="download">
+      <a class="btn" href={RESUME.href} download>Download the résumé (PDF, 2 pages)</a>
+    </p>
+  </PageHeader>
+
+  <div class="container-page sheet">
+    <section class="block">
+      <h2>Experience</h2>
+      {
+        experience.map((job) => (
+          <article class="entry">
+            <header>
+              <h3>
+                {job.role} <span class="org">· {job.org}</span>
+              </h3>
+              <p class="meta tnum">
+                {job.where} · {job.period}
+              </p>
+            </header>
+            <ul>
+              {job.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+
+    <section class="block">
+      <h2>Selected projects</h2>
+      {
+        projects.map((project) => (
+          <article class="entry">
+            <h3>{project.name}</h3>
+            <ul>
+              {project.points.map((point) => (
+                <li>{point}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+
+    <section class="block">
+      <h2>Education</h2>
+      {
+        education.map((entry) => (
+          <article class="entry">
+            <h3>
+              {entry.school} <span class="meta tnum">· {entry.period}</span>
+            </h3>
+            <ul>
+              {entry.lines.map((line) => (
+                <li>{line}</li>
+              ))}
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+
+    <section class="block">
+      <h2>Honors and recognition</h2>
+      <ul class="entry">
+        {honors.map((honor) => <li>{honor}</li>)}
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Contact</h2>
+      <ul class="entry">
+        <li><a href={`mailto:${OWNER.email}`}>{OWNER.email}</a></li>
+        <li>
+          <a href={OWNER.linkedin} rel="me noopener">{OWNER.linkedin.replace('https://www.', '')}</a
+          >
+        </li>
+        <li><a href={OWNER.github} rel="me noopener">{OWNER.github.replace('https://', '')}</a></li>
+        <li>{OWNER.location}</li>
+      </ul>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .download {
+    margin-top: var(--space-6);
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-5);
+    background-color: var(--color-accent);
+    border: 1px solid var(--color-accent);
+    border-radius: var(--radius-card);
+    color: var(--color-accent-contrast);
+    font-size: var(--text-sm);
+    font-weight: 560;
+    text-decoration: none;
+  }
+
+  .btn:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: var(--color-accent-contrast);
+  }
+
+  .sheet {
+    padding-block: var(--space-12);
+    max-width: min(var(--width-content), 62rem);
+  }
+
+  .block + .block {
+    margin-top: var(--space-12);
+  }
+
+  .block > h2 {
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--color-border);
+    font-size: var(--text-xs);
+    font-weight: 620;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .entry {
+    margin-top: var(--space-6);
+  }
+
+  .entry h3 {
+    font-size: var(--text-base);
+    font-weight: 620;
+  }
+
+  .org {
+    font-weight: 440;
+    color: var(--color-text-muted);
+  }
+
+  .meta {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    font-weight: 400;
+    color: var(--color-text-subtle);
+  }
+
+  .entry ul {
+    margin-top: var(--space-3);
+    padding-left: var(--space-5);
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  .entry li {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  ul.entry {
+    padding-left: var(--space-5);
+    display: grid;
+    gap: var(--space-2);
+  }
+
+  li::marker {
+    color: var(--color-text-subtle);
+  }
+</style>

@@ -1,0 +1,70 @@
+---
+title: FloodScope
+hook: Turning a river forecast into 5 families of operational metrics, at 3 scales, every 6 hours.
+section: geospatial
+tier: gallery
+year: 2026
+status: planned
+order: 12
+tags:
+  - flood
+  - gis
+  - data-pipeline
+  - climate
+  - python
+alsoIn:
+  - data-ai
+plannedNote: >-
+  The architecture, module breakdown, and refresh contract are locked in a committed build
+  guide. No repository exists yet; the numbers below are scope, not output.
+stats:
+  - value: '3'
+    label: Scales, tract to county
+    scope: true
+  - value: '5'
+    label: Headline metric families in scope
+    scope: true
+  - value: '6 h'
+    label: Target refresh cadence
+    scope: true
+  - value: '9'
+    label: Modules specified, M1–M9
+    scope: true
+thumbnail: ../../assets/projects/floodscope/thumbnail.png
+thumbnailAlt: Architecture diagram of FloodScope — an R batch geoprocessing layer producing exposure tables, a fixed interchange contract, and a Python runtime that scores, serves, and publishes every six hours.
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+{/* DRAFT: owner review — written from the project's committed build guide §1, §5, §6. */}
+
+## What this is
+
+A platform that converts water levels into statements about specific public assets:
+flooded road length, affected critical facilities, isolated assets, park and open-space
+flooding, and a preparedness priority score — rolled up to the scale an official actually
+manages. A tract for outreach, a municipality for operations, a county for coordination.
+
+It is the third of a trilogy. FloodOps asks _what floods at stage X?_ for one town.
+FloodSentinel asks _is stage X coming, and who should know?_ FloodScope is the platform a
+county emergency-management office would actually commission.
+
+<ArchitectureDiagram slug="floodscope" />
+
+## The load-bearing decision
+
+**R owns batch geoprocessing; Python owns everything at runtime.** Intersecting every
+scenario polygon with every road, asset, park, and tract happens once, locally, in R's
+`sf`, producing exposure tables. The six-hourly job is then pure Python: fetch forecasts,
+snap each to the nearest scenario at or below it, roll up precomputed numbers, score,
+publish. No R in scheduled jobs at all.
+
+That split is what makes the refresh fast, cheap, and dependency-light — and it is why
+runtime needs no geometry. Snapping _down_ to the nearest library scenario is also
+conservative by construction for flood extent, which is the right direction to be wrong
+in.
+
+The two halves communicate only through file formats — GeoPackage, COG, Parquet, DuckDB.
+Neither side reads the other's internals. Every metric surface will carry its source,
+vintage, and uncertainty range, and every page will carry the demonstration disclaimer:
+this is not an operational warning system.

@@ -1,0 +1,68 @@
+---
+import { STATUS_LABELS } from '../lib/projects';
+
+/**
+ * Status chip (§3.1). Color is never the only channel (§8.3): each status carries a
+ * distinct dot shape/fill plus its written label.
+ */
+
+interface Props {
+  status: string;
+}
+
+const { status } = Astro.props;
+const label = STATUS_LABELS[status] ?? status;
+---
+
+<span class="status" data-status={status}>
+  <span class="dot" aria-hidden="true"></span>
+  {label}
+</span>
+
+<style>
+  .status {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-1_5);
+    padding: 2px var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-chip);
+    background-color: var(--color-surface);
+    color: var(--color-text-muted);
+    font-size: var(--text-2xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+
+  .dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    border: 1.5px solid currentColor;
+    background-color: currentColor;
+  }
+
+  /* Live and published are "real"; planned and in-progress are outlined, not filled. */
+  .status[data-status='live'] {
+    color: var(--color-accent);
+    border-color: color-mix(in srgb, var(--color-accent) 40%, var(--color-border));
+  }
+
+  .status[data-status='published'] {
+    color: var(--color-text);
+  }
+
+  .status[data-status='in-progress'] .dot,
+  .status[data-status='planned'] .dot {
+    background-color: transparent;
+  }
+
+  .status[data-status='planned'] {
+    border-style: dashed;
+  }
+
+  .status[data-status='archived'] {
+    color: var(--color-text-subtle);
+  }
+</style>

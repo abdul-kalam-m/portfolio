@@ -1,0 +1,164 @@
+---
+import { Image } from 'astro:assets';
+import TagBadge from './TagBadge.astro';
+import StatusBadge from './StatusBadge.astro';
+import { projectHref, type Project } from '../lib/projects';
+
+/** Grid item on section indexes (§5.1): thumbnail, title, hook, tags, year, status badge. */
+
+interface Props {
+  project: Project;
+  /** `feature` gives the card a wider thumbnail for the home page's featured row. */
+  variant?: 'default' | 'feature';
+  /**
+   * Heading level for the card title. Section indexes place cards directly under the
+   * page h1, so they need h2; the home page nests them under an h2 and needs h3.
+   * Heading levels never skip (§8.1).
+   */
+  headingLevel?: 2 | 3;
+}
+
+const { project, variant = 'default', headingLevel = 3 } = Astro.props;
+const { data } = project;
+const href = projectHref(project);
+const visibleTags = data.tags.slice(0, 4);
+const Heading = `h${headingLevel}` as 'h2' | 'h3';
+---
+
+<article class="card surface-card" data-variant={variant}>
+  <a class="thumb-link" href={href} tabindex="-1" aria-hidden="true">
+    <Image
+      src={data.thumbnail}
+      alt=""
+      width={variant === 'feature' ? 900 : 640}
+      densities={[1, 2]}
+      loading="lazy"
+      class="thumb"
+    />
+  </a>
+
+  <div class="body">
+    <div class="meta">
+      <StatusBadge status={data.status} />
+      <span class="year tnum">{data.year}</span>
+    </div>
+
+    <Heading class="title">
+      <a href={href}>{data.title}</a>
+    </Heading>
+
+    <p class="hook">{data.hook}</p>
+
+    <ul class="tags">
+      {
+        visibleTags.map((tag) => (
+          <li>
+            <TagBadge tag={tag} />
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</article>
+
+<style>
+  .card {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    transition:
+      border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard);
+  }
+
+  .card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .card:has(a:focus-visible) {
+    border-color: var(--color-accent);
+  }
+
+  .thumb-link {
+    display: block;
+    background-color: var(--color-surface-2);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .thumb {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 1200 / 630;
+    object-fit: cover;
+  }
+
+  .body {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-4);
+  }
+
+  .meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2);
+  }
+
+  .year {
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+  }
+
+  .title {
+    font-size: var(--text-lg);
+    line-height: 1.25;
+  }
+
+  .title a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  /* Whole-card click target, without nesting interactive elements. */
+  .title a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .card {
+    position: relative;
+  }
+
+  .title a:hover {
+    color: var(--color-accent);
+  }
+
+  .hook {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1_5);
+    list-style: none;
+    margin: var(--space-1) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .card[data-variant='feature'] .body {
+      padding: var(--space-5);
+    }
+
+    .card[data-variant='feature'] .title {
+      font-size: var(--text-xl);
+    }
+  }
+</style>

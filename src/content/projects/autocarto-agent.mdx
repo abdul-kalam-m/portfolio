@@ -1,0 +1,193 @@
+---
+title: AutoCarto-Agent
+hook: A cartography agent where the LLM proposes and 6 deterministic statistical gates dispose.
+section: data-ai
+tier: flagship
+year: 2026
+status: published
+featured: true
+order: 1
+tags:
+  - llm-agents
+  - cartography
+  - spatial-statistics
+  - reproducible-research
+  - python
+alsoIn:
+  - geospatial
+stats:
+  - value: '530'
+    label: Atlanta tracts in the worked case
+  - value: '+0.326'
+    label: Bivariate Moran's I (p = 0.0050)
+  - value: '95.2%'
+    label: Gate decision accuracy on the seeded benchmark
+  - value: '6'
+    label: Deterministic validation gates
+thumbnail: ../../assets/projects/autocarto-agent/thumbnail.png
+thumbnailAlt: Three choropleths of Atlanta metro census tracts — tree canopy loss, asthma hospitalisation rate, and a bivariate combination — each annotated with the validation gate that approved its classification.
+links:
+  repo: https://github.com/abdul-kalam-m/cartollm
+---
+
+import Figure from '../../components/Figure.astro';
+import DetailsBlock from '../../components/DetailsBlock.astro';
+import architecture from '../../assets/projects/autocarto-agent/architecture_boundary.png';
+import results from '../../assets/projects/autocarto-agent/atlanta_results_panel.png';
+import ungated from '../../assets/projects/autocarto-agent/ungated_vs_gated.png';
+import sankey from '../../assets/projects/autocarto-agent/rejection_sankey.png';
+import sensitivity from '../../assets/projects/autocarto-agent/threshold_sensitivity.png';
+
+{/* DRAFT: owner review — copy drafted from the CartoLLM README, docs/, and committed outputs. */}
+
+## Problem
+
+Ask a language model to make a thematic map and it will happily pick a classification
+scheme, a projection, and a color ramp. It has no way to know whether any of those
+choices are defensible. Quintile breaks on a zero-inflated distribution, a density
+calculated in a geographic CRS, a bivariate map of two variables that are not spatially
+coupled — these are all fluent, plausible, and wrong.
+
+The interesting question is not "can an LLM make a map?" It is: **which decisions should
+an LLM be allowed to make at all?** AutoCarto-Agent answers it by drawing an explicit
+authority boundary. The model handles intent, framing, and language. Every numeric
+cartographic decision is either prescribed or vetoed by a deterministic gate.
+
+## Approach
+
+The architecture is neuro-symbolic: a Propose → Verify → Execute loop where verification
+is not another model but a set of statistical tests with published thresholds.
+
+<Figure
+  src={architecture}
+  alt="Architecture diagram showing the LLM tier proposing map specifications, a validation tier of six gates that either prescribe or veto each numeric decision, and an execution tier of audited code templates running in a sandbox."
+  caption="The authority boundary. The LLM never emits free-form code and never chooses a break value; it fills slots in three audited templates and transcribes numbers the gates hand it."
+  source="Source: CartoLLM docs/architecture.md."
+  variant="full"
+/>
+
+The critical design choice is that **a gate never merely says no**. Every rejection
+carries a prescription — the exact method and the full-precision break values that would
+make the proposal correct — and the orchestrator mandates that fix on the next iteration
+rather than asking the model to guess again. This is enforced structurally: a `REJECT`
+result without a prescription raises at construction time.
+
+### The six gates
+
+| Gate                         | Question it answers                                     | Statistic                                         |
+| ---------------------------- | ------------------------------------------------------- | ------------------------------------------------- |
+| 1 — CRS integrity            | Is a density or rate about to be computed in degrees?   | Equal-area EPSG whitelist per AOI scale           |
+| 2 — Classification           | Does this classification actually fit the distribution? | Goodness of Variance Fit, threshold 0.6           |
+| 3a — Univariate structure    | Is there spatial structure worth mapping?               | Moran's I with permutation test                   |
+| 3b — Bivariate justification | Are these two variables spatially coupled?              | Bivariate Moran's I, 199 permutations, Spearman ρ |
+| 4 — Projection distortion    | How much does this projection lie at this extent?       | Areal and angular distortion                      |
+| 5 — Color accessibility      | Is the ramp readable for colorblind viewers?            | Simulated dichromacy contrast                     |
+| 6 — Completeness             | Does the map have the elements it needs to be read?     | Structural checklist                              |
+
+<DetailsBlock summary="Technical detail — how Gate 2 diagnoses rather than vetoes">
+
+Gate 2 characterises the raw distribution shape independently of whatever classification
+was proposed: `well_behaved`, `zero_inflated`, `heavy_right_skew`, `outlier_dominated`,
+`discrete_ordinal`, or `insufficient_variance`. Diagnosis dispatch runs _before_ the GVF
+check, and zero-inflation is tested before skew, because a distribution can trigger both
+and the more specific diagnosis should win.
+
+Each diagnosis maps to a mandated method — a manual break at zero then Fisher-Jenks on
+the non-zero tail; a `log1p` transform with back-transformed breaks; `arcsinh` where
+negatives make a log invalid; head-tail breaks for heavy tails; unique-value
+classification for discrete ordinals. The prescription carries breaks at full precision
+for the model to transcribe, with a human-readable version rounded to six significant
+figures so a last-bit float difference across platforms cannot change behaviour.
+
+Thresholds live in a single versioned registry with a rationale attached to each, so
+changing one is a one-line diff with a citable reason rather than an archaeology
+exercise through gate source files.
+
+</DetailsBlock>
+
+## Results
+
+The worked case is tree canopy loss against asthma hospitalisation across 530 census
+tracts in Fulton and DeKalb counties, Georgia, on real TIGER geometry.
+
+<Figure
+  src={results}
+  alt="Three-panel figure: choropleth A shows tree canopy loss percentage, choropleth B shows asthma hospitalisation rate per 10,000, and choropleth C shows the bivariate combination with a 3-by-3 legend. Panels A and B carry a Gate 2 annotation reading 'log transform then jenks'; panel C carries a Gate 3b approval with the reported statistics."
+  caption="Gate 2 rejected the naive Jenks classification on both variables and mandated a log transform, lifting Goodness of Variance Fit from 0.751 to 0.835 for canopy loss and 0.774 to 0.861 for asthma rate. Gate 3b then approved the bivariate encoding at I_xy = +0.3262 (p = 0.0050), Spearman ρ = +0.9471."
+  source="Source: CartoLLM output/figures/atlanta_results_panel.png, regenerated by scripts/gen_results_panel.py from the pinned data snapshot."
+  variant="full"
+/>
+
+<Figure
+  src={ungated}
+  alt="Side-by-side comparison of the same data mapped without validation gates and with them, showing markedly different spatial patterns from the same underlying values."
+  caption="The same data, ungated and gated. The difference is not aesthetic — the ungated classification puts most tracts in one class and hides the pattern the map exists to show."
+  source="Source: CartoLLM output/figures/ungated_vs_gated.png."
+  variant="full"
+/>
+
+### Does the validator actually decide correctly?
+
+A rejection rate on its own means nothing — a gate that rejects everything scores well on
+it. So the benchmark is a seeded corpus with **known ground-truth outcomes**, and the
+headline number is decision correctness, not rejections.
+
+Across 24 scenarios the validator reaches **95.2% strict decision accuracy** (20 of 21
+scorable scenarios; 3 borderline cases are reported but not scored). It is correct on 14
+of 15 pathological scenarios and 6 of 6 benign ones. The overall rejection rate is 62.5%,
+which is high **by construction**: four of five Gate-2 regimes and one of three Gate-3b
+regimes in the corpus are pathological on purpose. That figure is only meaningful quoted
+alongside the corpus composition, and the committed report embeds it for exactly that
+reason.
+
+<Figure
+  src={sankey}
+  alt="Sankey diagram tracing naive proposals through the validation gates to their outcomes, with flow widths showing how many proposals were rejected by each diagnosis category."
+  caption="Where naive proposals go to die: rejections by cause across the benchmark corpus — heavy right skew (6), zero inflation (3), discrete ordinal (3), and no spatial cross-correlation (3)."
+  source="Source: CartoLLM benchmarks/mini_benchmark_report.json, regenerated by `autocarto benchmark`."
+  variant="full"
+/>
+
+## What I would do next, and what is weak
+
+One miss is worth naming: on an independently-generated scenario the bivariate gate
+approved an encoding it should have rejected — I_xy = +0.1965 at p = 0.005 with Spearman
+ρ = 0.2398. A statistically significant but substantively weak association passed a
+threshold tuned for stronger signal. That case is in the committed report rather than
+filtered out of it.
+
+The threshold sensitivity analysis surfaced a second honest weakness: the
+`heavy_right_skew` prescription clears the GVF floor only 82.5% of the time even when
+applied correctly — the weakest of the five prescriptive regimes.
+
+<Figure
+  src={sensitivity}
+  alt="Threshold sensitivity curves showing how gate outcome rates change across the range of the Goodness of Variance Fit threshold, with the shipped value marked."
+  caption="Sensitivity of gate behaviour across the GVF threshold range. These are honestly-labeled rate curves, not accuracy curves — no independent ground truth exists for the 'correct' cutoff, and the docs say so rather than implying more rigour than there is."
+  source="Source: CartoLLM scripts/threshold_sensitivity.py, output/figures/threshold_sensitivity.png."
+  variant="full"
+/>
+
+Next: a formal calibration sweep for the thresholds that are currently conventional
+rather than swept, and a second prescriptive regime for skewed distributions where the
+log transform underperforms.
+
+## Reproducibility
+
+The core loop runs fully offline and seeded by default — no API key, no network, no
+Docker. Rerunning the demo reproduces the statistical trace content byte for byte, and
+the test suite compares against blessed traces committed in the repository.
+
+```bash
+pip install -e .[dev]
+autocarto demo         # deterministic demo → ./output
+autocarto benchmark    # rejection-rate report → ./benchmarks
+pytest                 # ~215 tests: gates, orchestrator, determinism, security
+```
+
+CI runs on every push across Linux and Windows × Python 3.12 and 3.14, plus a dedicated
+gVisor security job. The execution sandbox — non-root, no shell, network-isolated — was
+red-teamed against 27 escape vectors, and air-gapped mode was verified to open zero
+sockets.
+
+Presented as a poster at the Spatiotemporal Data Science Symposium (STDS) 2026.

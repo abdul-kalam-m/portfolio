@@ -1,0 +1,67 @@
+---
+title: Jurisdiction Intelligence OS
+hook: Permit-cycle benchmarks for 6+ jurisdictions, with an LLM extractor gated on a scored eval.
+section: data-ai
+tier: gallery
+year: 2026
+status: planned
+order: 13
+tags:
+  - llm-agents
+  - data-pipeline
+  - planning
+  - policy
+  - python
+plannedNote: >-
+  A committed build guide and product spec exist; no code has been written. The targets
+  below are acceptance criteria the project must hit before anything publishes — not
+  results it has achieved.
+stats:
+  - value: '6+'
+    label: Benchmark jurisdictions targeted
+    scope: true
+  - value: '100+'
+    label: Board items to extract
+    scope: true
+  - value: '≥ 0.90'
+    label: Required precision on a 30-item gold set
+    scope: true
+thumbnail: ../../assets/projects/jurisdiction-intelligence-os/thumbnail.png
+thumbnailAlt: Architecture diagram of Jurisdiction Intelligence OS — a weekly Python pipeline with an eval-gated LLM extractor writing small committed JSON artifacts that a static React app reads.
+---
+
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+
+{/* DRAFT: owner review — written from the project's committed build guide §1, §5, §6. */}
+
+## What this is
+
+A working demo of a B2B product: jurisdiction scorecards benchmarking real permit cycle
+times from open municipal records, a project-fit checker driving a dynamic submission
+checklist, and a signal feed that extracts planning-board actions from New Jersey meeting
+minutes. Presented as a product — landing page, positioning, an explicitly illustrative
+pricing page — while every number in it comes from public records.
+
+It complements the flood work by pointing the same data-engineering habits at a
+private-sector question, and by putting product thinking on the page alongside the
+pipeline.
+
+<ArchitectureDiagram slug="jurisdiction-intelligence-os" />
+
+## The part that actually matters
+
+The centrepiece is not the LLM extractor; it is **the evaluation set that gates it**.
+Thirty hand-labeled board items, precision measured per field, and a publication gate at
+0.90 — an extraction pipeline without a scored gold set is a demo, not an engineering
+artifact. Every scorecard figure traces back to a recorded source extract, and every
+checklist item carries a citation to an official source.
+
+Collection ethics are written into the guide as non-negotiable: honour robots.txt,
+identify with a contact email in the user agent, at least five seconds between requests
+to a host, cache everything so nothing unchanged is ever refetched, public documents
+only, and stop entirely on a 403 or 429. Published extractions reference the board, not
+named private individuals.
+
+The spec's original plan was to buy commercial permit data. This build deliberately does
+not — the spec itself argues the moat is the normalisation and extraction layer, so that
+is the layer being demonstrated.

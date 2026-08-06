@@ -1,0 +1,85 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import { SECTIONS } from '../lib/sections';
+
+/** Custom 404 with links back to the three sections (§2.1). */
+---
+
+<BaseLayout
+  title="Page not found"
+  description="That page does not exist. Links back to the three sections of the portfolio."
+  path="/404/"
+>
+  <PageHeader
+    eyebrow="404"
+    title="That page is not here."
+    lead="The link may be out of date, or the page may never have existed. Slugs on this site are stable once published, so an old link should still work — if one does not, I would like to know."
+  />
+
+  <div class="container-page body">
+    <ul class="links">
+      {
+        SECTIONS.map((section) => (
+          <li>
+            <a class="link surface-card" href={section.href}>
+              <span class="name">{section.name}</span>
+              <span class="desc">{section.description}</span>
+            </a>
+          </li>
+        ))
+      }
+      <li>
+        <a class="link surface-card" href="/">
+          <span class="name">Home</span>
+          <span class="desc">Start from the top.</span>
+        </a>
+      </li>
+    </ul>
+  </div>
+</BaseLayout>
+
+<style>
+  .body {
+    padding-block: var(--space-12);
+  }
+
+  .links {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .links {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  .link {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-5);
+    text-decoration: none;
+    transition: border-color var(--duration-fast) var(--ease-standard);
+  }
+
+  .link:hover {
+    border-color: var(--color-accent);
+  }
+
+  .name {
+    font-weight: 620;
+    color: var(--color-text);
+  }
+
+  .desc {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+</style>

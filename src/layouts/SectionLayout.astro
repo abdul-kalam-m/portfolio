@@ -1,0 +1,108 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import PageHeader from '../components/PageHeader.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { getProjectsInSection, getCrossListedProjects } from '../lib/projects';
+import type { Section } from '../lib/sections';
+
+/**
+ * Section index (§2.2): a card grid of project summaries plus a 2–3 sentence intro
+ * tying the section to the core narrative.
+ */
+
+interface Props {
+  section: Section;
+}
+
+const { section } = Astro.props;
+const projects = await getProjectsInSection(section.slug);
+const crossListed = await getCrossListedProjects(section.slug);
+---
+
+<BaseLayout
+  title={section.name}
+  description={section.description}
+  path={section.href}
+  image={`/og/${section.slug}.png`}
+  imageAlt={`${section.name} — ${section.description}`}
+>
+  <PageHeader eyebrow="Section" title={section.name} lead={section.intro} />
+
+  <div class="container-page">
+    {
+      projects.length > 0 ? (
+        <ul class="grid">
+          {projects.map((project) => (
+            <li>
+              <ProjectCard project={project} headingLevel={2} />
+            </li>
+          ))}
+        </ul>
+      ) : (
+        <slot name="empty" />
+      )
+    }
+
+    {
+      crossListed.length > 0 && (
+        <section class="cross">
+          <h2>Also relevant here</h2>
+          <p class="cross-note">
+            These live in another section but do substantial work in this one.
+          </p>
+          <ul class="grid">
+            {crossListed.map((project) => (
+              <li>
+                <ProjectCard project={project} />
+              </li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </div>
+</BaseLayout>
+
+<style>
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-6);
+    list-style: none;
+    margin: var(--space-10) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .cross {
+    margin-top: var(--space-16);
+    padding-top: var(--space-10);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .cross h2 {
+    font-size: var(--text-xl);
+  }
+
+  .cross-note {
+    margin-top: var(--space-2);
+    max-width: var(--width-prose);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .cross .grid {
+    margin-top: var(--space-6);
+  }
+</style>

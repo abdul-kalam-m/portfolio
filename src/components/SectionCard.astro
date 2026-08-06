@@ -1,0 +1,78 @@
+---
+import type { Section } from '../lib/sections';
+
+/** The 3 section entries on home (§5.1): name + 1-liner + project count. */
+
+interface Props {
+  section: Section;
+  count: number;
+  /** One line, shorter than the section index intro. */
+  blurb: string;
+}
+
+const { section, count, blurb } = Astro.props;
+---
+
+<article class="section-card surface-card">
+  <h3 class="name">
+    <a href={section.href}>{section.name}</a>
+  </h3>
+  <p class="blurb">{blurb}</p>
+  <p class="count tnum">{`${count} ${count === 1 ? 'project' : 'projects'}`}</p>
+</article>
+
+<style>
+  .section-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+    padding: var(--space-5);
+    transition:
+      border-color var(--duration-base) var(--ease-standard),
+      box-shadow var(--duration-base) var(--ease-standard);
+  }
+
+  .section-card:hover {
+    border-color: var(--color-border-strong);
+    box-shadow: var(--shadow-card-hover);
+  }
+
+  .section-card:has(a:focus-visible) {
+    border-color: var(--color-accent);
+  }
+
+  .name {
+    font-size: var(--text-lg);
+    line-height: 1.25;
+  }
+
+  .name a {
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .name a::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+  }
+
+  .name a:hover {
+    color: var(--color-accent);
+  }
+
+  .blurb {
+    flex: 1;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .count {
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
+    letter-spacing: var(--tracking-wide);
+    color: var(--color-text-subtle);
+  }
+</style>

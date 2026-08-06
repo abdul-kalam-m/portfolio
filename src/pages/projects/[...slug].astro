@@ -1,0 +1,24 @@
+---
+import { render } from 'astro:content';
+import ProjectLayout from '../../layouts/ProjectLayout.astro';
+import Figure from '../../components/Figure.astro';
+import DetailsBlock from '../../components/DetailsBlock.astro';
+import ProvenanceTable from '../../components/ProvenanceTable.astro';
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+import { getProjects } from '../../lib/projects';
+
+export async function getStaticPaths() {
+  const projects = await getProjects();
+  return projects.map((project) => ({
+    params: { slug: project.id },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { Content } = await render(project);
+---
+
+<ProjectLayout project={project}>
+  <Content components={{ Figure, DetailsBlock, ProvenanceTable, ArchitectureDiagram }} />
+</ProjectLayout>

@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>India Urban Heat Dashboard &mdash; Top 50 Hottest Cities</title>
+  <meta name="description" content="Live tracking of dangerous heat across 50 Indian cities: population-weighted map, ranked table, 7-day trend, and a 2024/2025/2026 comparison." />
+  <!--
+    Leaflet and Chart.js are served from this origin (public/labs/heat-dashboard/vendor/),
+    not a CDN — see scripts/vendor-labs-assets.mjs and OPERATING_GUIDE.md §13.5.10.
+  -->
+  <link rel="stylesheet" href="./vendor/leaflet.css" />
+  <link rel="stylesheet" href="./css/styles.css" />
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+</head>
+<body>
+  <a class="lab-skip" href="#map">Skip to the map</a>
+
+  <nav class="lab-bar" aria-label="Site">
+    <a href="/projects/india-urban-heat-dashboard/">&larr; Case study</a>
+    <span class="lab-bar-sep" aria-hidden="true">&middot;</span>
+    <a href="/">Abdul Kalam</a>
+  </nav>
+
+  <header class="topbar">
+    <div class="brand">
+      <h1>India Urban Heat Dashboard</h1>
+      <p class="subtitle">Live tracking of the 50 hottest cities &middot; data via Open-Meteo</p>
+    </div>
+    <div class="meta">
+      <div id="last-updated">Loading&hellip;</div>
+      <button id="refresh-btn" type="button">Refresh</button>
+    </div>
+  </header>
+
+  <div id="stale-banner" class="stale-banner hidden" role="status">
+    <span class="alert-icon" aria-hidden="true">&#9432;</span>
+    <span id="stale-banner-text"></span>
+  </div>
+
+  <div id="alert-banner" class="alert-banner hidden" role="status">
+    <span class="alert-icon" aria-hidden="true">&#9888;</span>
+    <span id="alert-banner-text"></span>
+  </div>
+
+  <noscript>
+    <div class="stale-banner">
+      This dashboard needs JavaScript to query the weather API and draw the map. The
+      <a href="/projects/india-urban-heat-dashboard/">case study</a> covers the method and
+      shows the same views as static images.
+    </div>
+  </noscript>
+
+  <section class="kpi-row" aria-label="Headline figures">
+    <div class="kpi"><div class="kpi-label">Hottest City Now</div><div class="kpi-value" id="kpi-hottest">&mdash;</div></div>
+    <div class="kpi"><div class="kpi-label">Peak Temp (&deg;C)</div><div class="kpi-value" id="kpi-peak">&mdash;</div></div>
+    <div class="kpi"><div class="kpi-label">Cities &ge; 40&deg;C</div><div class="kpi-value" id="kpi-over40">&mdash;</div></div>
+    <div class="kpi"><div class="kpi-label">Heatwave Alerts (&ge;46&deg;C)</div><div class="kpi-value alert-text" id="kpi-alerts">&mdash;</div></div>
+  </section>
+
+  <section class="grid-main">
+    <div class="panel map-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Heat Map</h2>
+          <div class="panel-sub">
+            Marker size &propto; population &middot; color = current temperature &middot; click for details
+          </div>
+        </div>
+        <div class="map-controls">
+          <label class="control-label" for="basemap-select">Basemap</label>
+          <select id="basemap-select">
+            <option value="dark">Dark Matter</option>
+            <option value="voyager">Voyager (soft)</option>
+            <option value="positron">Positron (light)</option>
+            <option value="esri-gray">Esri Light Gray</option>
+            <option value="esri-sat">Esri Satellite</option>
+          </select>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-choropleth" checked />
+            <span>State fill</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-mask" checked />
+            <span>Focus India</span>
+          </label>
+          <label class="toggle">
+            <input type="checkbox" id="toggle-cities" checked />
+            <span>Cities</span>
+          </label>
+        </div>
+      </div>
+      <div id="map" tabindex="0" role="application" aria-label="Map of current temperatures across India. The ranked table below lists the same values as text."></div>
+      <div class="legend">
+        <span class="legend-title">Temperature</span>
+        <span class="legend-item"><span class="dot" style="background:#ffeda0"></span>&lt;30&deg;</span>
+        <span class="legend-item"><span class="dot" style="background:#fed976"></span>30&ndash;35&deg;</span>
+        <span class="legend-item"><span class="dot" style="background:#feb24c"></span>35&ndash;40&deg;</span>
+        <span class="legend-item"><span class="dot" style="background:#fd8d3c"></span>40&ndash;43&deg;</span>
+        <span class="legend-item"><span class="dot" style="background:#e31a1c"></span>43&ndash;46&deg;</span>
+        <span class="legend-item"><span class="dot" style="background:#800026"></span>&ge;46&deg; (heatwave)</span>
+      </div>
+    </div>
+
+    <div class="panel ranking-panel">
+      <div class="panel-header">
+        <div>
+          <h2>Top 50 Ranked Now</h2>
+          <div class="panel-sub">Click any column header to sort &middot; rows in red exceed 46&deg;C</div>
+        </div>
+        <label class="sr-only" for="city-filter">Filter cities</label>
+        <input type="search" id="city-filter" placeholder="Filter city or state&hellip;" />
+      </div>
+      <div class="table-wrap">
+        <table id="ranking-table">
+          <caption class="sr-only">
+            The 50 tracked cities ranked by current temperature, with today&rsquo;s peak,
+            24-hour change, and relative humidity. This table is the text alternative for
+            the map above.
+          </caption>
+          <thead>
+            <tr>
+              <th data-sort="rank" class="sortable" scope="col">#</th>
+              <th data-sort="name" class="sortable" scope="col">City</th>
+              <th data-sort="state" class="sortable" scope="col">State</th>
+              <th data-sort="temp" class="sortable active desc" scope="col">Now</th>
+              <th data-sort="todayMax" class="sortable" scope="col">Peak</th>
+              <th data-sort="delta24h" class="sortable" scope="col">24h &Delta;</th>
+              <th data-sort="humidity" class="sortable" scope="col">RH%</th>
+            </tr>
+          </thead>
+          <tbody id="ranking-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <section class="grid-main">
+    <div class="panel trend-panel">
+      <div class="panel-header">
+        <h2>7-Day Trend &mdash; Top 5 Hottest Cities</h2>
+        <div class="panel-sub">Daily maximum temperature (&deg;C) over the past week</div>
+      </div>
+      <canvas id="trend-chart" role="img" aria-label="Line chart of daily maximum temperature over the past seven days for the five hottest cities."></canvas>
+    </div>
+
+    <div class="panel alert-panel">
+      <div class="panel-header">
+        <h2>Active Heatwave Alerts</h2>
+        <div class="panel-sub">Cities currently at or above 46&deg;C</div>
+      </div>
+      <ul id="alert-list" class="alert-list">
+        <li class="muted">No active alerts.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="panel history-panel">
+    <div class="panel-header">
+      <h2>Historical Context &mdash; Same Week, 2024 vs 2025 vs 2026</h2>
+      <div class="panel-sub" id="history-window">Computing comparison window&hellip;</div>
+    </div>
+    <div class="history-grid">
+      <div class="history-stats">
+        <div class="stat-card"><div class="stat-label">2024 week avg peak</div><div class="stat-value" id="hist-2024-avg">&mdash;</div></div>
+        <div class="stat-card"><div class="stat-label">2025 week avg peak</div><div class="stat-value" id="hist-2025-avg">&mdash;</div></div>
+        <div class="stat-card"><div class="stat-label">2026 week avg peak</div><div class="stat-value" id="hist-2026-avg">&mdash;</div></div>
+        <div class="stat-card"><div class="stat-label">Cities hotter than 2025</div><div class="stat-value" id="hist-hotter">&mdash;</div></div>
+      </div>
+      <canvas id="history-chart" role="img" aria-label="Grouped bar chart comparing week-mean daily maximum temperature in 2024, 2025, and 2026 for the fifteen hottest cities."></canvas>
+    </div>
+  </section>
+
+  <footer>
+    <p>
+      A portfolio demonstration, not an official warning service &middot; Weather data:
+      <a href="https://open-meteo.com/" target="_blank" rel="noopener">Open-Meteo</a>
+      (Forecast + ERA5 Archive) &middot; Map tiles:
+      <a href="https://carto.com/attributions" target="_blank" rel="noopener">CARTO</a> /
+      <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noopener">OpenStreetMap</a>
+      &middot; Boundaries:
+      <a href="https://gist.github.com/jbrobst/56c13bbbf9d97d187fea01ca62ea5112" target="_blank" rel="noopener">India States GeoJSON</a>,
+      vendored locally &middot;
+      <a href="/projects/india-urban-heat-dashboard/">Method and design decisions</a>
+    </p>
+  </footer>
+
+  <script src="./vendor/leaflet.js"></script>
+  <script src="./vendor/chart.umd.js"></script>
+  <script src="./js/cities.js"></script>
+  <script src="./js/api.js"></script>
+  <script src="./js/dashboard.js"></script>
+</body>
+</html>

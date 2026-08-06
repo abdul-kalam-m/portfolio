@@ -1,0 +1,27 @@
+# build output
+dist/
+.astro/
+
+# dependencies
+node_modules/
+
+# logs
+*-debug.log*
+
+# environment
+.env
+.env.production
+
+# tests
+test-results/
+playwright-report/
+blob-report/
+playwright/.cache/
+.lighthouseci/
+
+# macOS / Windows
+.DS_Store
+Thumbs.db
+
+# Generated for the Claude Design handoff; rebuild with scripts/build-design-bundle.mjs
+design-bundle/

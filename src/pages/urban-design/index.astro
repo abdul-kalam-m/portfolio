@@ -1,0 +1,62 @@
+---
+import SectionLayout from '../../layouts/SectionLayout.astro';
+import { getSection } from '../../lib/sections';
+import { OWNER } from '../../lib/site';
+
+/**
+ * This section has no published projects yet, by design.
+ *
+ * §10.4 requires that the candidate list be extracted from the owner's portfolio PDFs and
+ * approved before publication, and §13.5.6 makes publishing unapproved work prohibited.
+ * The honest state is an explicit "in preparation" — not an empty grid and not a 404.
+ */
+---
+
+<SectionLayout section={getSection('urban-design')}>
+  <section class="empty surface-card" slot="empty">
+    <p class="eyebrow">In preparation</p>
+    <h2>This section is being assembled from earlier design work.</h2>
+    <p>
+      The urban design and climate resilience projects come from studio and professional portfolios
+      that exist as print-resolution boards. Rather than dropping in screenshot-quality images, each
+      project is being re-exported and written up to the same standard as the rest of this site: a
+      stated problem, the method, and what the work actually changed.
+    </p>
+    <p>
+      In the meantime, the climate-resilience thread runs through the geospatial work — the <a
+        href="/projects/nj-hazard-vulnerability/">hazard vulnerability dashboard</a
+      > is explicitly built for mitigation prioritisation.
+    </p>
+    <p class="cta">
+      Want to see the design work now? <a href={`mailto:${OWNER.email}`}>Email me</a> and I will send
+      the current portfolio PDF.
+    </p>
+  </section>
+</SectionLayout>
+
+<style>
+  .empty {
+    margin-top: var(--space-10);
+    padding: var(--space-8);
+    max-width: var(--width-prose);
+  }
+
+  .empty h2 {
+    margin-top: var(--space-2);
+    font-size: var(--text-xl);
+  }
+
+  .empty p + p {
+    margin-top: var(--space-4);
+  }
+
+  .empty p:not(.eyebrow) {
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .cta {
+    padding-top: var(--space-4);
+    border-top: 1px solid var(--color-border);
+  }
+</style>

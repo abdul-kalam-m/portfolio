@@ -1,0 +1,419 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PageHeader from '../../components/PageHeader.astro';
+import SectionCard from '../../components/SectionCard.astro';
+import ProjectCard from '../../components/ProjectCard.astro';
+import ImpactStrip from '../../components/ImpactStrip.astro';
+import StatusBadge from '../../components/StatusBadge.astro';
+import TagBadge from '../../components/TagBadge.astro';
+import Breadcrumb from '../../components/Breadcrumb.astro';
+import DetailsBlock from '../../components/DetailsBlock.astro';
+import ProvenanceTable from '../../components/ProvenanceTable.astro';
+import Prose from '../../components/Prose.astro';
+import AuthorByline from '../../components/AuthorByline.astro';
+import ArchitectureDiagram from '../../components/ArchitectureDiagram.astro';
+import { SECTIONS } from '../../lib/sections';
+import { getProjects } from '../../lib/projects';
+import { STATUSES, TAGS } from '../../content.config';
+
+/**
+ * Component workbench (§11 Phase 1). Excluded from the production build by the
+ * `exclude-dev-routes` integration in astro.config.mjs — check there before assuming
+ * this page is reachable in production.
+ *
+ * This is also the page the design handoff points at (see DESIGN_HANDOFF.md).
+ */
+
+const projects = await getProjects();
+const featured = projects.filter((p) => p.data.featured);
+const planned = projects.filter((p) => p.data.status === 'planned');
+
+const colorGroups = [
+  {
+    name: 'Neutral ramp',
+    note: 'Background, surfaces, borders, text. Flips between themes.',
+    tokens: [
+      '--color-bg',
+      '--color-surface',
+      '--color-surface-2',
+      '--color-border',
+      '--color-border-strong',
+      '--color-text',
+      '--color-text-muted',
+      '--color-text-subtle',
+    ],
+  },
+  {
+    name: 'Accent',
+    note: 'Links, active states, primary buttons. One accent, no second brand color.',
+    tokens: [
+      '--color-accent',
+      '--color-accent-hover',
+      '--color-accent-contrast',
+      '--color-accent-soft',
+      '--color-focus',
+    ],
+  },
+  {
+    name: 'Heat ramp — data only',
+    note: 'Sequential. Reserved for heat and severity encodings. Never UI chrome.',
+    tokens: [
+      '--color-heat-1',
+      '--color-heat-2',
+      '--color-heat-3',
+      '--color-heat-4',
+      '--color-heat-5',
+      '--color-heat',
+    ],
+  },
+  {
+    name: 'Water ramp — data only',
+    note: 'Sequential. Reserved for flood and water encodings.',
+    tokens: [
+      '--color-water-1',
+      '--color-water-2',
+      '--color-water-3',
+      '--color-water-4',
+      '--color-water-5',
+    ],
+  },
+  {
+    name: 'Categorical — data only',
+    note: 'Okabe-Ito, colorblind-safe. For series, not for meaning-by-hue alone.',
+    tokens: [
+      '--color-cat-1',
+      '--color-cat-2',
+      '--color-cat-3',
+      '--color-cat-4',
+      '--color-cat-5',
+      '--color-cat-6',
+      '--color-cat-7',
+      '--color-cat-8',
+    ],
+  },
+];
+
+const typeScale = [
+  { token: '--text-4xl', label: 'Display — page h1 at ≥ 768px' },
+  { token: '--text-3xl', label: 'Page h1' },
+  { token: '--text-2xl', label: 'Section heading' },
+  { token: '--text-xl', label: 'Subsection heading' },
+  { token: '--text-lg', label: 'Lead paragraph, card title' },
+  { token: '--text-base', label: 'Body' },
+  { token: '--text-sm', label: 'Secondary, captions, metadata' },
+  { token: '--text-xs', label: 'Eyebrow, table header' },
+  { token: '--text-2xs', label: 'Chips' },
+];
+
+const spaceScale = [1, 2, 3, 4, 5, 6, 8, 10, 12, 16, 20, 24];
+---
+
+<BaseLayout
+  title="Components — dev"
+  description="Component workbench. Not part of the production build."
+  path="/dev/components/"
+>
+  <PageHeader
+    eyebrow="Development"
+    title="Component workbench"
+    lead="Every component in the §5.1 inventory, in one place. Toggle the theme and resize to 320px — a component is not done until it is correct in both themes at the floor width."
+  />
+
+  <div class="container-page work">
+    <section class="block">
+      <h2>Color tokens</h2>
+      {
+        colorGroups.map((group) => (
+          <div class="group">
+            <h3>{group.name}</h3>
+            <p class="note">{group.note}</p>
+            <ul class="swatches">
+              {group.tokens.map((token) => (
+                <li>
+                  <span class="swatch" style={`background: var(${token})`} />
+                  <code>{token}</code>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))
+      }
+    </section>
+
+    <section class="block">
+      <h2>Type scale</h2>
+      <ul class="type-list">
+        {
+          typeScale.map((step) => (
+            <li>
+              <span style={`font-size: var(${step.token})`}>Turning data into decisions</span>
+              <code>
+                {step.token} — {step.label}
+              </code>
+            </li>
+          ))
+        }
+      </ul>
+      <p class="note">
+        Two families only: Inter Variable for everything, JetBrains Mono Variable for code, chips,
+        and any number in a table. Both self-hosted.
+      </p>
+    </section>
+
+    <section class="block">
+      <h2>Spacing scale</h2>
+      <ul class="space-list">
+        {
+          spaceScale.map((step) => (
+            <li>
+              <span class="bar" style={`width: var(--space-${step})`} />
+              <code>--space-{step}</code>
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Badges</h2>
+      <div class="row">
+        {STATUSES.map((status) => <StatusBadge status={status} />)}
+      </div>
+      <div class="row">
+        {TAGS.slice(0, 10).map((tag) => <TagBadge tag={tag} />)}
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Breadcrumb</h2>
+      <Breadcrumb
+        crumbs={[{ name: 'Geospatial Intelligence', href: '/geospatial/' }]}
+        current="NJ Parcel Flood Risk Dashboard"
+      />
+    </section>
+
+    <section class="block">
+      <h2>Impact strip — verified results</h2>
+      <ImpactStrip
+        stats={[
+          { value: '530', label: 'Atlanta tracts in the worked case' },
+          { value: '+0.326', label: "Bivariate Moran's I (p = 0.0050)" },
+          { value: '95.2%', label: 'Gate decision accuracy' },
+          { value: '6', label: 'Deterministic validation gates' },
+        ]}
+      />
+    </section>
+
+    <section class="block">
+      <h2>Impact strip — scope figures</h2>
+      <p class="note">
+        The same component with <code>scope: true</code>. This variant exists so a project with no
+        results cannot accidentally look like one that has them (§13.6).
+      </p>
+      <ImpactStrip
+        stats={[
+          { value: '3.4M', label: 'Parcels in scope', scope: true },
+          { value: '21', label: 'Counties targeted', scope: true },
+          { value: '564', label: 'Municipalities targeted', scope: true },
+        ]}
+      />
+    </section>
+
+    <section class="block">
+      <h2>Section cards</h2>
+      <ul class="grid-3">
+        {
+          SECTIONS.map((section) => (
+            <li>
+              <SectionCard section={section} count={3} blurb={section.description} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Project cards</h2>
+      <ul class="grid-3">
+        {
+          [...featured, ...planned.slice(0, 1)].map((project) => (
+            <li>
+              <ProjectCard project={project} />
+            </li>
+          ))
+        }
+      </ul>
+    </section>
+
+    <section class="block">
+      <h2>Provenance table</h2>
+      <ProvenanceTable
+        caption="Data sources table, as used on case-study pages."
+        rows={[
+          {
+            source: 'FEMA NFHL',
+            product: 'Special Flood Hazard Areas',
+            vintage: '2026-01',
+            access: 'Public REST service',
+          },
+          {
+            source: 'NJ MOD-IV',
+            product: 'Tax assessment records',
+            vintage: '2025',
+            access: 'NJGIN download',
+          },
+        ]}
+      />
+    </section>
+
+    <section class="block">
+      <h2>Disclosure</h2>
+      <DetailsBlock summary="Technical detail">
+        <p>
+          Method detail lives behind progressive disclosure rather than being cut (§3.3). Native <code
+            >&lt;details&gt;</code
+          >, so it is keyboard-operable with no JavaScript.
+        </p>
+      </DetailsBlock>
+    </section>
+
+    <section class="block">
+      <h2>Prose</h2>
+      <Prose>
+        <h2>A heading inside prose</h2>
+        <p>
+          Body copy sits on a 68ch measure. Numbers over adjectives: 203 census tracts, five cities,
+          a pre-specified robustness battery. Links look
+          <a href="/about/">like this</a>, and inline <code>code</code> like that.
+        </p>
+        <h3>A subheading</h3>
+        <ul>
+          <li>List items carry the same measure and rhythm.</li>
+          <li>Markers are subtle; the text does the work.</li>
+        </ul>
+        <blockquote>A pull quote, used sparingly.</blockquote>
+      </Prose>
+    </section>
+
+    <section class="block">
+      <h2>Architecture diagram</h2>
+      <ArchitectureDiagram slug="floodscope" />
+    </section>
+
+    <section class="block">
+      <h2>Author byline</h2>
+      <AuthorByline />
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .work {
+    padding-block: var(--space-12);
+  }
+
+  .block + .block {
+    margin-top: var(--space-16);
+    padding-top: var(--space-10);
+    border-top: 1px solid var(--color-border);
+  }
+
+  .block > h2 {
+    font-size: var(--text-xl);
+  }
+
+  .group {
+    margin-top: var(--space-6);
+  }
+
+  .group h3 {
+    font-size: var(--text-base);
+  }
+
+  .note {
+    margin-top: var(--space-2);
+    max-width: var(--width-prose);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .swatches {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    gap: var(--space-3);
+    list-style: none;
+    margin: var(--space-4) 0 0;
+    padding: 0;
+  }
+
+  .swatches li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .swatch {
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius-sm);
+    border: 1px solid var(--color-border-strong);
+    flex: none;
+  }
+
+  code {
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    color: var(--color-text-muted);
+  }
+
+  .type-list,
+  .space-list {
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-3);
+  }
+
+  .type-list li {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: var(--space-3);
+  }
+
+  .space-list li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+  }
+
+  .bar {
+    height: 16px;
+    background: var(--color-accent);
+    border-radius: 2px;
+    flex: none;
+  }
+
+  .row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    margin-top: var(--space-4);
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 64rem) {
+    .grid-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+</style>

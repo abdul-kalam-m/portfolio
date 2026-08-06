@@ -1,0 +1,27 @@
+---
+/** Metadata chip for a controlled-vocabulary tag (§5.1, §6.5). */
+
+interface Props {
+  tag: string;
+}
+
+const { tag } = Astro.props;
+---
+
+<span class="tag">{tag}</span>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-chip);
+    background-color: var(--color-surface-2);
+    color: var(--color-text-muted);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    white-space: nowrap;
+  }
+</style>

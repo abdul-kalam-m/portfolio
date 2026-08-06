@@ -1,0 +1,194 @@
+---
+title: India Urban Heat Dashboard
+hook: Dangerous heat across 50 Indian cities on one screen, from 2 batched API calls.
+section: data-ai
+tier: flagship
+year: 2026
+status: live
+featured: true
+order: 2
+tags:
+  - dashboard
+  - heat
+  - climate
+  - cartography
+  - javascript
+stats:
+  - value: '50'
+    label: Cities tracked, population-weighted
+  - value: '46 °C'
+    label: Severe-heatwave alert threshold
+  - value: '2'
+    label: Batched API calls, replacing 86 sequential
+  - value: '3'
+    label: Years compared in the same view
+thumbnail: ../../assets/projects/india-urban-heat-dashboard/thumbnail.png
+thumbnailAlt: The India Urban Heat Dashboard — a dark map of India with state-level temperature fill and proportional city markers, beside a ranked table of the 50 hottest cities.
+links:
+  lab: /labs/heat-dashboard/
+---
+
+import Figure from '../../components/Figure.astro';
+import DetailsBlock from '../../components/DetailsBlock.astro';
+import ProvenanceTable from '../../components/ProvenanceTable.astro';
+import full from '../../assets/projects/india-urban-heat-dashboard/dashboard-full.png';
+import mapDetail from '../../assets/projects/india-urban-heat-dashboard/dashboard-map.png';
+
+{/* DRAFT: owner review — adapted from the project's own CASE_STUDY.md per §10.3. */}
+
+## Problem
+
+India's pre-monsoon season regularly pushes dozens of cities past 45 °C. The public
+dashboards that exist tend to show either a single map of state-level warnings or a long
+list of city temperatures — rarely both, and almost never with historical context or
+population weighting in the same view.
+
+I wanted one screen that answers four questions in under ten seconds:
+
+1. Where is it hottest right now, at both city and state scale?
+2. How many people are exposed to dangerous heat?
+3. Is today unusual compared with recent years?
+4. Which cities crossed the severe-heatwave threshold?
+
+## Approach
+
+A static HTML and JavaScript page with no backend, no build step, and no API key — so it
+stays shareable as a link indefinitely.
+
+<ProvenanceTable
+  caption="Data sources and why each was chosen."
+  rows={[
+    {
+      source: 'Open-Meteo Forecast API',
+      product: 'Current temperature, relative humidity, daily max, past-24h hourly',
+      vintage: 'Live',
+      access: 'Free, no auth, batched multi-point requests',
+    },
+    {
+      source: 'Open-Meteo Archive API',
+      product: 'ERA5 reanalysis daily maxima for the same week in prior years',
+      vintage: 'Live',
+      access: 'Free, no auth',
+    },
+    {
+      source: 'jbrobst India States GeoJSON',
+      product: '36 state and union-territory boundaries, ST_NM property',
+      vintage: 'Retrieved 2026-08-06',
+      access: 'Vendored into this site, not hotlinked',
+    },
+    {
+      source: 'Curated city list',
+      product: '50 heat-prone cities with baked-in coordinates and population',
+      vintage: 'Committed',
+      access: 'public/labs/heat-dashboard/js/cities.js',
+    },
+  ]}
+/>
+
+### Three encodings, three variables
+
+The map layers three encodings, and the discipline is that **no two carry the same
+variable** — every channel earns its place.
+
+| Encoding                 | Variable                                                | Why this channel                                                                    |
+| ------------------------ | ------------------------------------------------------- | ----------------------------------------------------------------------------------- |
+| State polygon fill       | Current temperature at a representative point per state | Color is the fastest channel for ordinal data; regional patterns appear immediately |
+| Marker color             | Current temperature at the city                         | Same scale as the fill, so the palette is learned once                              |
+| Marker radius (√-scaled) | City population                                         | Size answers "how many people are under this dot"                                   |
+| Popup                    | Humidity, today's peak, 24-hour change, population      | Detail on demand keeps the canvas uncluttered                                       |
+
+<Figure
+  src={mapDetail}
+  alt="Detail of the dashboard map: India rendered as figure against a masked-out surrounding region, with states filled by temperature and circular city markers sized by population."
+  caption="Every state is filled, not just the eleven containing a tracked city. One extra batched request against ~36 state centroids buys a complete national picture — the first version left Kerala, Karnataka, Tamil Nadu, and the Northeast grey, and the map read as broken."
+  source="Screenshot of /labs/heat-dashboard/, 2026-08-06."
+  variant="full"
+/>
+
+<DetailsBlock summary="Technical detail — the India mask and deterministic layer order">
+
+**Figure-ground without a caption.** One `L.polygon` whose outer ring is the world
+rectangle and whose holes are every state's outer ring, rendered with
+`fillRule: "evenodd"` in the page background color. Pakistan, Sri Lanka, Bangladesh, and
+the rest of Asia dissolve into the page; India becomes the unambiguous figure. It is
+toggleable, but the default tells the story.
+
+**Z-order as a declaration, not a side effect.** Adding the choropleth and mask produced
+a classic stacking bug: markers were sometimes obscured by the state fill, sometimes by
+the mask, depending on which layer rendered last. `bringToFront`/`bringToBack` worked but
+was fragile across refreshes. The fix was four explicit Leaflet panes with assigned
+z-indices:
+
+```
+tile (200) < choroplethPane (350) < maskPane (360) < outlinePane (370) < markers (400)
+```
+
+Layer order became a property of the map, not an accident of render timing. This is the
+pattern I now reach for first on any layered map.
+
+</DetailsBlock>
+
+### The 46 °C threshold
+
+The India Meteorological Department's formal severe-heatwave definition for the plains is
+a departure of +6.4 °C from normal, which is not computable live without a normals
+surface. 46 °C is the practical proxy that news outlets use, and it is defensible to
+explain. It drives four things at once: the red banner, the row highlight in the table,
+the dedicated alert panel, and a white border on the map marker.
+
+The palette is a six-bin scale keyed to heat-health thresholds rather than to aesthetics,
+with **purple deliberately off the warm ramp at ≥ 46 °C** so severe cases pop rather than
+blend. The same six bins are reused on markers, choropleth, table cells, popup headers,
+and history bars — learned once, applied everywhere.
+
+<Figure
+  src={full}
+  alt="Full-page view of the dashboard: four KPI tiles, the map beside a ranked table of 50 cities, a seven-day trend chart, an alerts panel, and a three-year historical comparison chart."
+  caption="Read top to bottom in decreasing urgency: alert banner, four KPIs, map paired with a ranked table, seven-day trend, then the three-year comparison last because it takes the most effort to read."
+  source="Screenshot of /labs/heat-dashboard/, 2026-08-06."
+  variant="full"
+/>
+
+## Results
+
+The four-KPI row was the single biggest usability win — it gives the page a "you are
+here" anchor that frames everything below it.
+
+Performance discipline mattered more than expected. Two batched requests replaced 86
+sequential ones: one for all 50 cities, one for all ~36 state centroids. That is the
+difference between a page that renders immediately and one that visibly crawls.
+
+The toggles came from realising the map is really **five separable views in one** —
+basemap, choropleth, mask, outline, markers. Letting the viewer compose their own
+combination respects their analysis without overloading the default state.
+
+Accessibility work is partly hidden in the basemap dropdown: Positron and Esri Light Gray
+give the warm temperature palette its highest contrast, which matters for low-vision and
+colorblind viewers, since the blue-to-purple ramp reads more cleanly against a near-white
+base. Color is never the only channel — the table pairs numbers with colored bars, the
+alert system uses a banner with explicit text, and popups always list numeric values
+beside the color.
+
+## Limitations and what I would do next
+
+Curating 50 cities buys predictable load and baked-in population at the cost of ever
+discovering an unexpectedly hot city outside the list. One representative point per state
+is a real simplification: an area-weighted state average would need roughly ten sample
+points per state. And Open-Meteo gives me ERA5 and GFS but not IMD's official
+"heatwave declared" flag, which has rules beyond raw temperature.
+
+Next, in order of value: an **anomaly view** coloring cities by departure from the
+1991–2020 normal rather than by raw temperature — that reframes "hot" as "unusual", which
+is the more useful question; a **wet-bulb overlay**, because the human-mortality story is
+wet-bulb, not dry-bulb; and a time slider to scrub through the past week.
+
+## Reliability
+
+The dashboard is live, so it has to degrade honestly. If Open-Meteo is unreachable, every
+request falls back to a committed snapshot and the page says so in a banner and in the
+header — "Snapshot data · as of &lt;date&gt;" — rather than rendering stale numbers as
+though they were current. One upstream failure flips the whole page to snapshot mode, so
+it is never half-live and half-cached.
+
+Leaflet, Chart.js, and the boundary GeoJSON are served from this domain rather than a
+CDN, so the tool does not break when someone else's host does.

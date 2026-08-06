@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 420" width="1000" height="420" role="img" aria-label="How do 3.4 million parcels get scored and served without a backend?">
+<style>
+  .box { fill: #ffffff; stroke: #8a857b; stroke-width: 1; }
+  .box-label { fill: #171614; font: 600 13px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; }
+  .box-detail { fill: #57534b; font: 400 11px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; }
+  .lane-name { fill: #171614; font: 620 12px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; letter-spacing: 0.06em; text-transform: uppercase; }
+  .lane-note { fill: #57534b; font: 400 11px 'Inter Variable', ui-sans-serif, system-ui, sans-serif; }
+  .arrow { stroke: #0a6c74; stroke-width: 1.5; }
+  .arrow-head { fill: #0a6c74; }
+</style>
+<rect width="1000" height="420" fill="#fbfaf8"/>
+<text x="28" y="40" class="lane-name">Python ETL</text>
+<text x="28" y="54" class="lane-note">local, partitioned by county, every stage resumable</text>
+<rect x="28" y="66" width="227.0" height="66" rx="6" class="box"/>
+<text x="40" y="88" class="box-label">01 parcel core</text>
+<text x="40" y="106" class="box-detail">MOD-IV → geometry, privacy strip, class</text>
+<text x="40" y="120" class="box-detail">groups</text>
+<rect x="267" y="66" width="227.0" height="66" rx="6" class="box"/>
+<text x="279" y="88" class="box-label">03 intersect</text>
+<text x="279" y="106" class="box-detail">the heavy stage — NFHL + future layers</text>
+<rect x="506" y="66" width="227.0" height="66" rx="6" class="box"/>
+<text x="518" y="88" class="box-label">05 score</text>
+<text x="518" y="106" class="box-detail">0–100 with visible drivers</text>
+<rect x="745" y="66" width="227.0" height="66" rx="6" class="box"/>
+<text x="757" y="88" class="box-label">06 aggregate</text>
+<text x="757" y="106" class="box-detail">DuckDB → municipality and county</text>
+<text x="757" y="120" class="box-detail">rollups</text>
+<line x1="500" y1="142" x2="500" y2="158" class="arrow"/>
+<path d="M 495 156 L 500 164 L 505 156 Z" class="arrow-head"/>
+<text x="28" y="184" class="lane-name">Published artifacts</text>
+<text x="28" y="198" class="lane-note">Cloudflare R2, public bucket</text>
+<rect x="28" y="210" width="306.7" height="52" rx="6" class="box"/>
+<text x="40" y="232" class="box-label">PMTiles</text>
+<text x="40" y="250" class="box-detail">tippecanoe, parcel-zoom bands</text>
+<rect x="346.6666666666667" y="210" width="306.7" height="52" rx="6" class="box"/>
+<text x="358.6666666666667" y="232" class="box-label">Parquet + summary JSON</text>
+<rect x="665.3333333333334" y="210" width="306.7" height="52" rx="6" class="box"/>
+<text x="677.3333333333334" y="232" class="box-label">Per-municipality search shards</text>
+<line x1="500" y1="272" x2="500" y2="288" class="arrow"/>
+<path d="M 495 286 L 500 294 L 505 286 Z" class="arrow-head"/>
+<text x="28" y="314" class="lane-name">Static app</text>
+<text x="28" y="328" class="lane-note">only runtime calls: basemap, R2, geocoder</text>
+<rect x="28" y="340" width="944.0" height="52" rx="6" class="box"/>
+<text x="40" y="362" class="box-label">MapLibre + pmtiles protocol</text>
+<text x="40" y="380" class="box-detail">Vite + React, Cloudflare Pages</text>
+</svg>

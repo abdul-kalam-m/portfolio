@@ -1,0 +1,288 @@
+---
+import { Image, getImage } from 'astro:assets';
+import BaseLayout from './BaseLayout.astro';
+import Breadcrumb from '../components/Breadcrumb.astro';
+import ImpactStrip from '../components/ImpactStrip.astro';
+import StatusBadge from '../components/StatusBadge.astro';
+import TagBadge from '../components/TagBadge.astro';
+import Prose from '../components/Prose.astro';
+import QRShare from '../components/QRShare.astro';
+import AuthorByline from '../components/AuthorByline.astro';
+import { getSection } from '../lib/sections';
+import { projectHref, type Project } from '../lib/projects';
+import { creativeWorkJsonLd, breadcrumbJsonLd } from '../lib/seo';
+
+/**
+ * The case-study template (§3.1). Blocks 1–3 and 9 are structural and live here;
+ * blocks 4–8 are the MDX body, so a new project is content, not code (§13.2).
+ */
+
+interface Props {
+  project: Project;
+}
+
+const { project } = Astro.props;
+const { data, id } = project;
+const section = getSection(data.section);
+const path = projectHref(project);
+
+const links = data.links ?? {};
+const linkList = [
+  links.lab ? { href: links.lab, label: 'Launch the live tool', primary: true } : null,
+  links.demo ? { href: links.demo, label: 'Live demo', primary: true } : null,
+  links.repo ? { href: links.repo, label: 'Source repository' } : null,
+  links.paper ? { href: links.paper, label: 'Paper' } : null,
+  links.poster ? { href: links.poster, label: 'Poster' } : null,
+].filter((link) => link !== null);
+
+/*
+ * §8.2: project pages use the project thumbnail (1200×630) as og:image. Resolving it
+ * through getImage means the card points at the same optimized asset the page serves,
+ * so the two can never drift.
+ */
+const ogImage = await getImage({
+  src: data.thumbnail,
+  width: 1200,
+  height: 630,
+  format: 'png',
+});
+
+const jsonLd = [
+  creativeWorkJsonLd({
+    title: data.title,
+    description: data.hook,
+    path,
+    year: data.year,
+    image: ogImage.src,
+    keywords: data.tags,
+    scholarly: Boolean(links.paper || links.poster),
+  }),
+  breadcrumbJsonLd([
+    { name: 'Home', href: '/' },
+    { name: section.name, href: section.href },
+    { name: data.title, href: path },
+  ]),
+];
+---
+
+<BaseLayout
+  title={`${data.title} — ${section.navName}`}
+  description={data.hook}
+  path={path}
+  image={ogImage.src}
+  imageAlt={data.thumbnailAlt}
+  type="article"
+  jsonLd={jsonLd}
+>
+  <article class="project">
+    <header class="head">
+      <div class="container-page">
+        <Breadcrumb crumbs={[{ name: section.name, href: section.href }]} current={data.title} />
+
+        <div class="badges">
+          <StatusBadge status={data.status} />
+          <span class="year tnum">{data.year}</span>
+        </div>
+
+        <h1>{data.title}</h1>
+        <p class="hook">{data.hook}</p>
+
+        {
+          data.plannedNote && (
+            <p class="planned-note">
+              <strong>Not built yet.</strong> {data.plannedNote}
+            </p>
+          )
+        }
+
+        <ul class="tags">
+          {
+            data.tags.map((tag) => (
+              <li>
+                <TagBadge tag={tag} />
+              </li>
+            ))
+          }
+        </ul>
+
+        {
+          linkList.length > 0 && (
+            <ul class="links">
+              {linkList.map((link) => (
+                <li>
+                  <a
+                    class:list={['link-btn', link.primary && 'link-btn-primary']}
+                    href={link.href}
+                    rel={link.href.startsWith('http') ? 'noopener' : undefined}
+                  >
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          )
+        }
+      </div>
+    </header>
+
+    {
+      data.stats && data.stats.length > 0 && (
+        <div class="container-page strip">
+          <ImpactStrip stats={data.stats} ariaLabel={`Key figures for ${data.title}`} />
+        </div>
+      )
+    }
+
+    {
+      /*
+       * Planned projects use their card art as the og:image but not as a page hero: the
+       * body already opens with the same architecture at full detail, and showing a
+       * reduced copy of it directly above the readable one is noise, not a hero (§3.1).
+       */
+      data.status !== 'planned' && (
+        <div class="container-page hero">
+          <Image
+            src={data.thumbnail}
+            alt={data.thumbnailAlt}
+            width={1600}
+            densities={[1, 2]}
+            loading="eager"
+            fetchpriority="high"
+            class="hero-image"
+          />
+        </div>
+      )
+    }
+
+    <div class="container-page body">
+      <Prose>
+        <slot />
+      </Prose>
+
+      <QRShare path={path} slug={id} />
+      <AuthorByline />
+    </div>
+  </article>
+</BaseLayout>
+
+<style>
+  .head {
+    padding-block: var(--space-8) var(--space-6);
+  }
+
+  .badges {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    margin-top: var(--space-5);
+  }
+
+  .year {
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+  }
+
+  h1 {
+    margin-top: var(--space-3);
+    font-size: var(--text-3xl);
+    max-width: 18ch;
+  }
+
+  .hook {
+    margin-top: var(--space-4);
+    max-width: var(--width-prose);
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .planned-note {
+    margin-top: var(--space-4);
+    padding: var(--space-3) var(--space-4);
+    max-width: var(--width-prose);
+    border: 1px dashed var(--color-border-strong);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .planned-note strong {
+    color: var(--color-text);
+  }
+
+  .tags,
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+    list-style: none;
+    margin: var(--space-5) 0 0;
+    padding: 0;
+  }
+
+  .links {
+    gap: var(--space-3);
+  }
+
+  .link-btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-4);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-card);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: 560;
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .link-btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .link-btn-primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-contrast);
+  }
+
+  .link-btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: var(--color-accent-contrast);
+  }
+
+  .strip {
+    margin-top: var(--space-8);
+  }
+
+  .hero {
+    margin-top: var(--space-8);
+  }
+
+  .hero-image {
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+    background-color: var(--color-surface);
+  }
+
+  .body {
+    margin-top: var(--space-12);
+  }
+
+  @media (min-width: 48rem) {
+    h1 {
+      font-size: var(--text-4xl);
+    }
+  }
+</style>

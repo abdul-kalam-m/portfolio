@@ -1,0 +1,63 @@
+---
+import { OWNER, NARRATIVE } from '../lib/site';
+
+/**
+ * Compact "About the author" strip on project pages (§9.5).
+ *
+ * Entry via QR skips the home page, so every project page must say who wrote it and
+ * how to reach them without the visitor navigating anywhere.
+ */
+---
+
+<aside class="byline surface-card" aria-label="About the author">
+  <div>
+    <p class="name">{OWNER.fullName}</p>
+    <p class="line">{NARRATIVE.line}</p>
+  </div>
+  <ul class="links">
+    <li><a href="/about/">About</a></li>
+    <li><a href="/resume/">Résumé</a></li>
+    <li><a href={`mailto:${OWNER.email}`}>Email</a></li>
+    <li><a href={OWNER.github} rel="noopener">GitHub</a></li>
+  </ul>
+</aside>
+
+<style>
+  .byline {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    margin-top: var(--space-12);
+    padding: var(--space-4) var(--space-5);
+    background-color: var(--color-surface-2);
+  }
+
+  .name {
+    font-size: var(--text-sm);
+    font-weight: 640;
+    color: var(--color-text);
+  }
+
+  .line {
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  .links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    font-size: var(--text-sm);
+  }
+
+  .links a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+  }
+</style>

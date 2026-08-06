@@ -1,0 +1,114 @@
+---
+import { SECTIONS } from '../lib/sections';
+import { OWNER } from '../lib/site';
+
+/**
+ * Footer on every page (§2.3): email, LinkedIn, GitHub, and a "Built with" line linking
+ * to the site's own repo — the site is itself a portfolio piece.
+ */
+
+const year = new Date().getFullYear();
+---
+
+<footer class="site-footer">
+  <div class="container-page footer-inner">
+    <div class="footer-block">
+      <p class="eyebrow">Contact</p>
+      <ul class="footer-list">
+        <li><a href={`mailto:${OWNER.email}`}>{OWNER.email}</a></li>
+        <li><a href={OWNER.linkedin} rel="me noopener">LinkedIn</a></li>
+        <li><a href={OWNER.github} rel="me noopener">GitHub</a></li>
+        <li class="muted">{OWNER.location}</li>
+      </ul>
+    </div>
+
+    <div class="footer-block">
+      <p class="eyebrow">Sections</p>
+      <ul class="footer-list">
+        {
+          SECTIONS.map((section) => (
+            <li>
+              <a href={section.href}>{section.name}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="footer-block">
+      <p class="eyebrow">This site</p>
+      <ul class="footer-list">
+        <li><a href="/qr/">QR codes</a></li>
+        <li><a href="/resume/">Résumé</a></li>
+        <li><a href="/contact/">Contact</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="container-page footer-colophon">
+    <p>
+      Built with <a href="https://astro.build" rel="noopener">Astro</a>, hand-rolled components on a
+      token system, no third-party UI kit. <a href={OWNER.repo} rel="noopener">Source on GitHub</a>.
+    </p>
+    <p class="muted">© {year} {OWNER.fullName}</p>
+  </div>
+</footer>
+
+<style>
+  .site-footer {
+    margin-top: var(--space-20);
+    padding-block: var(--space-12) var(--space-8);
+    border-top: 1px solid var(--color-border);
+    background-color: var(--color-surface-2);
+  }
+
+  .footer-inner {
+    display: grid;
+    gap: var(--space-8);
+    grid-template-columns: 1fr;
+  }
+
+  @media (min-width: 40rem) {
+    .footer-inner {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+
+  .footer-list {
+    list-style: none;
+    margin: var(--space-3) 0 0;
+    padding: 0;
+    display: grid;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .footer-list a {
+    display: inline-flex;
+    align-items: center;
+    min-height: 32px;
+    color: var(--color-text);
+    text-decoration: none;
+  }
+
+  .footer-list a:hover {
+    color: var(--color-accent);
+    text-decoration: underline;
+  }
+
+  .muted {
+    color: var(--color-text-muted);
+  }
+
+  .footer-colophon {
+    margin-top: var(--space-10);
+    padding-top: var(--space-6);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

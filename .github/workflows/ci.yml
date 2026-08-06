@@ -1,0 +1,90 @@
+name: CI
+
+# OPERATING_GUIDE.md §12.1. Every gate here is a hard gate — §13.6 prohibits bypassing them.
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v5
+
+      - uses: pnpm/action-setup@v4
+
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - name: Install
+        run: pnpm install --frozen-lockfile
+
+      - name: Types (astro check)
+        run: pnpm check
+
+      - name: Formatting
+        run: pnpm format:check
+
+      - name: Design token contrast (WCAG 2.2 AA)
+        run: node scripts/check-contrast.mjs
+
+      # Traces every published figure back to its source repository. Those repositories are
+      # not checked out here, so unreachable claims report SKIP rather than failing the run
+      # — this gate has teeth locally, where the sources exist.
+      - name: Honesty audit
+        run: node scripts/audit-claims.mjs
+
+      # Fails on Zod content-schema violations (§6.4) and on any unresolved import.
+      - name: Build
+        run: pnpm build
+
+      - name: Byte budgets
+        run: node scripts/check-budgets.mjs
+
+      - name: Internal link check
+        run: node scripts/check-links.mjs
+
+      - name: Install Playwright browsers
+        run: pnpm exec playwright install --with-deps chromium
+
+      # e2e + axe-core (zero violations) + the honesty checks on planned projects.
+      - name: Tests
+        run: pnpm test
+
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
+
+  lighthouse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    needs: verify
+    steps:
+      - uses: actions/checkout@v5
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: pnpm
+
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm build
+
+      # §8.4 budgets, throttled mobile, on home plus one project page.
+      - name: Lighthouse CI
+        run: |
+          npm install -g @lhci/cli@0.15.x
+          lhci autorun
+        env:
+          LHCI_GITHUB_APP_TOKEN: ${{ secrets.LHCI_GITHUB_APP_TOKEN }}

@@ -1,0 +1,227 @@
+---
+import { SECTIONS } from '../lib/sections';
+import { OWNER } from '../lib/site';
+import ThemeToggle from './ThemeToggle.astro';
+
+/**
+ * Persistent top nav (§2.3): wordmark → home, the three sections in canonical order,
+ * About, Résumé. Contact lives in the footer and home hero.
+ *
+ * Mobile collapses to a menu button that is fully keyboard- and screen-reader-operable (§2.3).
+ */
+
+interface Props {
+  /** Path of the current page, used to mark the active nav item. */
+  path: string;
+}
+
+const { path } = Astro.props;
+
+const links = [
+  ...SECTIONS.map((section) => ({ href: section.href, label: section.navName })),
+  { href: '/about/', label: 'About' },
+  { href: '/resume/', label: 'Résumé' },
+];
+
+const isActive = (href: string) => path === href || path.startsWith(href);
+---
+
+<header class="site-header">
+  <div class="container-page header-inner">
+    <a class="wordmark" href="/">
+      <span class="wordmark-name">{OWNER.name}</span>
+      <span class="wordmark-role">{OWNER.role}</span>
+    </a>
+
+    <button
+      id="nav-toggle"
+      class="nav-toggle hit-target"
+      type="button"
+      aria-expanded="false"
+      aria-controls="site-nav"
+      aria-label="Open menu"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+        <path class="bar-top" d="M4 7h16"></path>
+        <path class="bar-mid" d="M4 12h16"></path>
+        <path class="bar-bot" d="M4 17h16"></path>
+      </svg>
+    </button>
+
+    <nav id="site-nav" class="site-nav" aria-label="Primary">
+      <ul>
+        {
+          links.map((link) => (
+            <li>
+              <a href={link.href} aria-current={isActive(link.href) ? 'page' : undefined}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+      <div class="nav-actions">
+        <ThemeToggle />
+      </div>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background-color: color-mix(in srgb, var(--color-bg) 88%, transparent);
+    backdrop-filter: saturate(1.4) blur(8px);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .header-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-4);
+    min-height: 60px;
+    flex-wrap: wrap;
+  }
+
+  .wordmark {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    color: var(--color-text);
+    text-decoration: none;
+    padding-block: var(--space-2);
+  }
+
+  .wordmark-name {
+    font-weight: 640;
+    font-size: var(--text-base);
+    letter-spacing: var(--tracking-tight);
+  }
+
+  .wordmark-role {
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  .nav-toggle {
+    padding: var(--space-2);
+    background: none;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    color: var(--color-text);
+    cursor: pointer;
+  }
+
+  .nav-toggle svg {
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+  }
+
+  .site-nav ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  .site-nav a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    color: var(--color-text-muted);
+    font-size: var(--text-sm);
+    font-weight: 520;
+    text-decoration: none;
+    transition: color var(--duration-fast) var(--ease-standard);
+  }
+
+  .site-nav a:hover {
+    color: var(--color-text);
+  }
+
+  .site-nav a[aria-current='page'] {
+    color: var(--color-accent);
+    font-weight: 620;
+  }
+
+  .nav-actions {
+    display: flex;
+    align-items: center;
+  }
+
+  /* --------------------------------------------------- narrow: collapsed */
+  @media (max-width: 47.99rem) {
+    .site-nav {
+      display: none;
+      width: 100%;
+      padding-block: var(--space-2) var(--space-4);
+      border-top: 1px solid var(--color-border);
+    }
+
+    .site-nav[data-open='true'] {
+      display: block;
+    }
+
+    .site-nav a {
+      padding-block: var(--space-1);
+    }
+
+    .nav-actions {
+      padding-top: var(--space-2);
+      margin-top: var(--space-2);
+      border-top: 1px solid var(--color-border);
+    }
+  }
+
+  /* ------------------------------------------------------- wide: inline */
+  @media (min-width: 48rem) {
+    .nav-toggle {
+      display: none;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+    }
+
+    .site-nav ul {
+      display: flex;
+      align-items: center;
+      gap: var(--space-5);
+    }
+  }
+</style>
+
+<script>
+  const toggle = document.getElementById('nav-toggle');
+  const nav = document.getElementById('site-nav');
+
+  if (toggle && nav) {
+    const setOpen = (open: boolean) => {
+      nav.dataset.open = String(open);
+      toggle.setAttribute('aria-expanded', String(open));
+      toggle.setAttribute('aria-label', open ? 'Close menu' : 'Open menu');
+    };
+
+    toggle.addEventListener('click', () => {
+      setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Escape closes the menu and returns focus to the control that opened it.
+    nav.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape') {
+        setOpen(false);
+        toggle.focus();
+      }
+    });
+  }
+</script>

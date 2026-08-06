@@ -1,0 +1,108 @@
+---
+/**
+ * Case-study block 2 (§3.1): 3–4 stat tiles. Numbers are `tabular-nums` (§5.1).
+ *
+ * Numbers MUST come from the project's own verified outputs, never invented (§3.1).
+ * A tile marked `scope` is a target or a size-of-problem figure, not a result — it is
+ * labeled as such in the UI so the two can never be confused (§13.6).
+ *
+ * At 375px the strip wraps to 2×2 (§8.5).
+ */
+
+interface Stat {
+  value: string;
+  label: string;
+  scope?: boolean;
+}
+
+interface Props {
+  stats: Stat[];
+  /** Optional heading for screen readers when the strip stands alone. */
+  ariaLabel?: string;
+}
+
+const { stats, ariaLabel = 'Key figures' } = Astro.props;
+const hasScope = stats.some((stat) => stat.scope);
+---
+
+<section class="impact" aria-label={ariaLabel}>
+  <ul class="tiles">
+    {
+      stats.map((stat) => (
+        <li class="tile surface-card" data-scope={stat.scope ? 'true' : undefined}>
+          <span class="value tnum">{stat.value}</span>
+          <span class="label">{stat.label}</span>
+          {stat.scope && <span class="scope-flag">scope, not a result</span>}
+        </li>
+      ))
+    }
+  </ul>
+  {
+    hasScope && (
+      <p class="scope-note">
+        Figures marked <strong>scope</strong> describe the size of the problem this project is
+        specified to handle. They are not measurements — nothing has been run yet.
+      </p>
+    )
+  }
+</section>
+
+<style>
+  .tiles {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-3);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .tiles {
+      grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    }
+  }
+
+  .tile {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-4);
+  }
+
+  .tile[data-scope='true'] {
+    border-style: dashed;
+    background-color: var(--color-surface-2);
+  }
+
+  .value {
+    font-size: var(--text-2xl);
+    font-weight: 640;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.1;
+    color: var(--color-text);
+  }
+
+  .label {
+    font-size: var(--text-sm);
+    line-height: 1.4;
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .scope-flag {
+    margin-top: var(--space-1);
+    font-family: var(--font-mono);
+    font-size: var(--text-2xs);
+    letter-spacing: var(--tracking-wide);
+    text-transform: uppercase;
+    color: var(--color-text-subtle);
+  }
+
+  .scope-note {
+    margin-top: var(--space-3);
+    max-width: var(--width-prose);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+</style>

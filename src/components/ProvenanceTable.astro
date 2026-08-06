@@ -1,0 +1,104 @@
+---
+/**
+ * Data-sources table (§5.1), GeoFloodFin README style: source / product / access.
+ *
+ * Wide tables scroll inside their own container rather than the page (§8.5).
+ */
+
+interface Row {
+  source: string;
+  product: string;
+  access: string;
+  /** Retrieval date or vintage, when the project records one (§7.5). */
+  vintage?: string;
+}
+
+interface Props {
+  rows: Row[];
+  caption?: string;
+}
+
+const { rows, caption } = Astro.props;
+const showVintage = rows.some((row) => row.vintage);
+---
+
+<div class="scroller" tabindex="0" role="region" aria-label={caption ?? 'Data sources'}>
+  <table>
+    {caption && <caption>{caption}</caption>}
+    <thead>
+      <tr>
+        <th scope="col">Source</th>
+        <th scope="col">Product</th>
+        {showVintage && <th scope="col">Vintage</th>}
+        <th scope="col">Access</th>
+      </tr>
+    </thead>
+    <tbody>
+      {
+        rows.map((row) => (
+          <tr>
+            <th scope="row">{row.source}</th>
+            <td>{row.product}</td>
+            {showVintage && <td class="tnum">{row.vintage ?? '—'}</td>}
+            <td>{row.access}</td>
+          </tr>
+        ))
+      }
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .scroller {
+    margin: var(--space-6) 0;
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface);
+  }
+
+  table {
+    width: 100%;
+    min-width: 34rem;
+    font-size: var(--text-sm);
+  }
+
+  caption {
+    padding: var(--space-3) var(--space-4) 0;
+    text-align: left;
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+  }
+
+  th,
+  td {
+    padding: var(--space-3) var(--space-4);
+    text-align: left;
+    vertical-align: top;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  thead th {
+    font-size: var(--text-xs);
+    font-weight: 620;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    background-color: var(--color-surface-2);
+    white-space: nowrap;
+  }
+
+  tbody th {
+    font-weight: 600;
+    color: var(--color-text);
+  }
+
+  tbody td {
+    color: var(--color-text-muted);
+  }
+
+  tbody tr:last-child th,
+  tbody tr:last-child td {
+    border-bottom: none;
+  }
+</style>

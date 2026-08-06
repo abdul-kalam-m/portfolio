@@ -1,0 +1,225 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SectionCard from '../components/SectionCard.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import { SECTIONS } from '../lib/sections';
+import { getFeaturedProjects, getProjects, getProjectsInSection } from '../lib/projects';
+import { NARRATIVE, OWNER, RESUME } from '../lib/site';
+import { personJsonLd } from '../lib/seo';
+
+const featured = await getFeaturedProjects();
+const allProjects = await getProjects();
+
+const counts = await Promise.all(
+  SECTIONS.map(async (section) => (await getProjectsInSection(section.slug)).length)
+);
+
+const blurbs: Record<string, string> = {
+  geospatial: 'Flood exposure and hazard vulnerability at parcel, tract, and county scale.',
+  'data-ai': 'Validated AI systems, reproducible pipelines, and dashboards with no backend.',
+  'urban-design': 'Planning and design work where climate adaptation is the brief.',
+};
+---
+
+<BaseLayout
+  title={`${OWNER.name} — ${OWNER.role}`}
+  description="I turn climate and urban data into decisions — spatial analysis, reproducible pipelines, and AI systems with deterministic validation."
+  path="/"
+  jsonLd={[personJsonLd()]}
+>
+  <section class="hero">
+    <div class="container-page">
+      <p class="eyebrow">{OWNER.role} · {OWNER.location}</p>
+      <h1>{NARRATIVE.line}</h1>
+      <p class="lead">{NARRATIVE.body}</p>
+
+      <ul class="actions">
+        <li><a class="btn btn-primary" href="#work">See the work</a></li>
+        <li><a class="btn" href={RESUME.href}>{RESUME.label}</a></li>
+        <li><a class="btn" href={`mailto:${OWNER.email}`}>Email me</a></li>
+      </ul>
+    </div>
+  </section>
+
+  <section class="sections" aria-labelledby="sections-heading">
+    <div class="container-page">
+      <h2 class="section-heading" id="sections-heading">Three bodies of work</h2>
+      <ul class="section-grid">
+        {
+          SECTIONS.map((section, index) => (
+            <li>
+              <SectionCard
+                section={section}
+                count={counts[index] ?? 0}
+                blurb={blurbs[section.slug] ?? section.description}
+              />
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+  </section>
+
+  {
+    featured.length > 0 && (
+      <section class="featured" id="work" aria-labelledby="featured-heading">
+        <div class="container-page">
+          <h2 class="section-heading" id="featured-heading">
+            Start here
+          </h2>
+          <p class="section-note">
+            Two systems that are built, tested, and running. Everything is traceable to the
+            repository that produced it.
+          </p>
+          <ul class="featured-grid">
+            {featured.map((project) => (
+              <li>
+                <ProjectCard project={project} variant="feature" />
+              </li>
+            ))}
+          </ul>
+        </div>
+      </section>
+    )
+  }
+
+  <section class="all" aria-labelledby="all-heading">
+    <div class="container-page">
+      <h2 class="section-heading" id="all-heading">Everything else</h2>
+      <p class="section-note">
+        Four systems that are fully specified — architecture, data contracts, and publication gates
+        written down — but not yet built. They are marked as such, on the card and on the page.
+      </p>
+      <ul class="all-grid">
+        {
+          allProjects
+            .filter((project) => !project.data.featured)
+            .map((project) => (
+              <li>
+                <ProjectCard project={project} />
+              </li>
+            ))
+        }
+      </ul>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .hero {
+    padding-block: var(--space-16) var(--space-12);
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  h1 {
+    margin-top: var(--space-3);
+    max-width: 16ch;
+    font-size: var(--text-3xl);
+  }
+
+  .lead {
+    margin-top: var(--space-5);
+    max-width: var(--width-prose);
+    font-size: var(--text-lg);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+  }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+    padding: var(--space-2) var(--space-5);
+    border: 1px solid var(--color-border-strong);
+    border-radius: var(--radius-card);
+    color: var(--color-text);
+    font-size: var(--text-sm);
+    font-weight: 560;
+    text-decoration: none;
+    transition:
+      border-color var(--duration-fast) var(--ease-standard),
+      color var(--duration-fast) var(--ease-standard);
+  }
+
+  .btn:hover {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+
+  .btn-primary {
+    background-color: var(--color-accent);
+    border-color: var(--color-accent);
+    color: var(--color-accent-contrast);
+  }
+
+  .btn-primary:hover {
+    background-color: var(--color-accent-hover);
+    border-color: var(--color-accent-hover);
+    color: var(--color-accent-contrast);
+  }
+
+  .sections,
+  .featured,
+  .all {
+    padding-block: var(--space-14);
+  }
+
+  .featured {
+    background-color: var(--color-surface-2);
+    border-block: 1px solid var(--color-border);
+  }
+
+  .section-heading {
+    font-size: var(--text-2xl);
+  }
+
+  .section-note {
+    margin-top: var(--space-3);
+    max-width: var(--width-prose);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .section-grid,
+  .featured-grid,
+  .all-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: var(--space-5);
+    list-style: none;
+    margin: var(--space-8) 0 0;
+    padding: 0;
+  }
+
+  @media (min-width: 40rem) {
+    .featured-grid,
+    .all-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 64rem) {
+    .section-grid {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .all-grid {
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+    }
+  }
+
+  @media (min-width: 48rem) {
+    h1 {
+      font-size: var(--text-4xl);
+    }
+  }
+</style>

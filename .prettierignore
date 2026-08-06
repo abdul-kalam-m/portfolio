@@ -1,0 +1,14 @@
+dist/
+.astro/
+node_modules/
+pnpm-lock.yaml
+playwright-report/
+test-results/
+
+# Vendored third-party bundles and the ported lab tool keep their upstream formatting,
+# so a reformat never obscures what actually changed from the original.
+public/labs/heat-dashboard/vendor/
+public/labs/heat-dashboard/js/
+public/labs/heat-dashboard/css/
+public/labs/heat-dashboard/data/
+scripts/vendor/

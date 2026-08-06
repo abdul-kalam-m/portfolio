@@ -1,0 +1,185 @@
+@import 'tailwindcss';
+@import './tokens.css';
+
+/*
+ * `dark:` covers both signals so a utility written once behaves correctly for
+ * JS-disabled users (media query) and after an explicit toggle (attribute).
+ */
+@custom-variant dark {
+  @media (prefers-color-scheme: dark) {
+    &:where(:root:not([data-theme='light']), :root:not([data-theme='light']) *) {
+      @slot;
+    }
+  }
+  &:where(:root[data-theme='dark'], :root[data-theme='dark'] *) {
+    @slot;
+  }
+}
+
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    /* No smooth scroll: it is motion the user did not ask for (§4.4). */
+    -webkit-text-size-adjust: 100%;
+    color-scheme: light dark;
+  }
+
+  body {
+    margin: 0;
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    font-family: var(--font-sans);
+    font-size: var(--text-base);
+    line-height: var(--text-base--line-height);
+    font-synthesis-weight: none;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    /* No horizontal page scroll at any width (§8.5). */
+    overflow-x: clip;
+  }
+
+  h1,
+  h2,
+  h3,
+  h4 {
+    margin: 0;
+    font-weight: 620;
+    letter-spacing: var(--tracking-tight);
+    line-height: 1.2;
+    text-wrap: balance;
+  }
+
+  p,
+  ul,
+  ol {
+    margin: 0;
+  }
+
+  a {
+    color: var(--color-accent);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 0.2em;
+  }
+
+  a:hover {
+    color: var(--color-accent-hover);
+  }
+
+  /* Every interactive element has a visible focus ring (§4.4). */
+  :focus-visible {
+    outline: 2px solid var(--color-focus);
+    outline-offset: 2px;
+    border-radius: var(--radius-sm);
+  }
+
+  img,
+  svg,
+  video {
+    display: block;
+    max-width: 100%;
+  }
+
+  table {
+    border-collapse: collapse;
+  }
+
+  ::selection {
+    background: var(--color-accent-soft);
+    color: var(--color-text);
+  }
+
+  /* Numbers are tabular everywhere they are compared (§5.1 StatTile). */
+  .tnum {
+    font-variant-numeric: tabular-nums;
+    font-feature-settings: 'tnum' 1;
+  }
+
+  /*
+   * Reduced motion means instant state change, not "slightly faster" (§4.4).
+   * Maps and dashboards additionally skip flyTo animations — see /labs.
+   */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}
+
+@layer components {
+  /* Shared shell: one container, one measure — not a one-off per page (§5.2.1). */
+  .container-page {
+    width: 100%;
+    max-width: var(--width-content);
+    margin-inline: auto;
+    padding-inline: var(--space-5);
+  }
+
+  @media (min-width: 48rem) {
+    .container-page {
+      padding-inline: var(--space-8);
+    }
+  }
+
+  /* Cards, stat tiles, and figures share one radius and elevation treatment (§4.3). */
+  .surface-card {
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    box-shadow: var(--shadow-card);
+  }
+
+  .eyebrow {
+    font-size: var(--text-xs);
+    font-weight: 600;
+    letter-spacing: var(--tracking-caps);
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+  }
+
+  /*
+   * Wide artifacts step outside the prose measure without leaving the page container.
+   *
+   * This works because a `.prose` block starts at the container's content edge, so a child
+   * only has to grow rightwards. Capping against the viewport keeps 320px honest (§8.5).
+   */
+  .breakout {
+    width: min(calc(var(--width-content) - var(--space-16)), calc(100vw - var(--space-10)));
+    max-width: none;
+  }
+
+  /* Hit targets are >= 44x44 on touch (§4.4). */
+  .hit-target {
+    min-block-size: 44px;
+    min-inline-size: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+}
+
+@media print {
+  /* /qr/ must print cleanly, black on white (§9.3). */
+  :root {
+    --color-bg: #ffffff;
+    --color-surface: #ffffff;
+    --color-text: #000000;
+    --color-text-muted: #333333;
+    --color-border: #999999;
+    --color-accent: #000000;
+    --shadow-card: none;
+  }
+
+  .print\:hidden {
+    display: none !important;
+  }
+}

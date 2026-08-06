@@ -1,0 +1,71 @@
+---
+import { DIAGRAMS } from '../lib/diagrams';
+import { renderDiagramSvg } from '../lib/diagram-svg';
+
+/**
+ * Inline architecture diagram for a planned project. Diagrams over prose wherever a
+ * pipeline has three or more stages (§3.1 block 5).
+ *
+ * The SVG uses live token variables, so it re-themes with the page (§4.1).
+ */
+
+interface Props {
+  slug: string;
+}
+
+const { slug } = Astro.props;
+const diagram = DIAGRAMS[slug];
+if (!diagram) throw new Error(`No architecture diagram defined for "${slug}"`);
+
+const svg = renderDiagramSvg(diagram);
+---
+
+<figure class="diagram breakout">
+  <div class="scroller" tabindex="0" role="region" aria-label={diagram.caption}>
+    <div class="canvas" set:html={svg} />
+  </div>
+  <figcaption>
+    <span class="caption">{diagram.caption}</span>
+    <span class="source">{diagram.source}</span>
+  </figcaption>
+</figure>
+
+<style>
+  .diagram {
+    margin: var(--space-8) 0;
+  }
+
+  /* Wide artifacts scroll inside their own container, never the page (§8.5). */
+  .scroller {
+    overflow-x: auto;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-card);
+    background-color: var(--color-surface-2);
+    box-shadow: var(--shadow-card);
+  }
+
+  .canvas {
+    min-width: 40rem;
+    padding: var(--space-2);
+  }
+
+  .canvas :global(svg) {
+    width: 100%;
+    height: auto;
+  }
+
+  figcaption {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
+  .source {
+    font-size: var(--text-xs);
+    color: var(--color-text-subtle);
+  }
+</style>

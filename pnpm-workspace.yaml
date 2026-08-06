@@ -1,0 +1,5 @@
+# pnpm 11 reads settings from here, not from package.json's "pnpm" field.
+# esbuild and sharp ship prebuilt native binaries via their install scripts.
+allowBuilds:
+  esbuild: true
+  sharp: true
