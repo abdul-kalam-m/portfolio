@@ -42,7 +42,7 @@ Read this before the inventory. It is the useful part.
    home page separates them into "Start here" and "Everything else" with a sentence of
    explanation, but the cards themselves carry the same weight. A visitor skimming sees six
    projects and no visual signal about which two are real. The `planned` badge does the
-   honest work; it does not do the *hierarchy* work.
+   honest work; it does not do the _hierarchy_ work.
 
 3. **Card thumbnails are inconsistent in kind.** Two are real artifacts (a figure, a
    screenshot); four are system diagrams generated from the build guides. They sit in one
@@ -74,18 +74,18 @@ Read this before the inventory. It is the useful part.
 These are hard. They come from the operating guide, not from taste, and CI enforces most of
 them — a design that violates one will fail the build, not just the review.
 
-| Constraint | Where it is enforced |
-| --- | --- |
-| WCAG 2.2 AA, **zero** axe violations on every route in both themes | `tests/a11y.spec.ts` |
-| Every token pair meets AA (4.5:1 text, 3:1 non-text UI) | `scripts/check-contrast.mjs` |
-| ≤ 30 KB gzipped JS on static pages | `scripts/check-budgets.mjs` — currently 0.7–1.7 KB |
-| Initial page weight ≤ 500 KB | same — currently 45–72 KB |
-| Lighthouse ≥ 95 / 100 / 100 / 100, LCP ≤ 2.5 s, CLS ≤ 0.05 | `lhci` in CI |
-| No horizontal scroll at 320, 375, 640, 768, 1024, 1440 | `tests/site.spec.ts` |
-| Both themes correct; 320 px is the floor | manual + screenshots |
-| Motion 150–250 ms, all gated behind `prefers-reduced-motion` | `global.css` |
-| Visible `:focus-visible` everywhere; touch targets ≥ 44×44 | axe + `.hit-target` |
-| Colour is never the only channel for meaning | axe + `StatusBadge` design |
+| Constraint                                                         | Where it is enforced                               |
+| ------------------------------------------------------------------ | -------------------------------------------------- |
+| WCAG 2.2 AA, **zero** axe violations on every route in both themes | `tests/a11y.spec.ts`                               |
+| Every token pair meets AA (4.5:1 text, 3:1 non-text UI)            | `scripts/check-contrast.mjs`                       |
+| ≤ 30 KB gzipped JS on static pages                                 | `scripts/check-budgets.mjs` — currently 0.7–1.7 KB |
+| Initial page weight ≤ 500 KB                                       | same — currently 45–72 KB                          |
+| Lighthouse ≥ 95 / 100 / 100 / 100, LCP ≤ 2.5 s, CLS ≤ 0.05         | `lhci` in CI                                       |
+| No horizontal scroll at 320, 375, 640, 768, 1024, 1440             | `tests/site.spec.ts`                               |
+| Both themes correct; 320 px is the floor                           | manual + screenshots                               |
+| Motion 150–250 ms, all gated behind `prefers-reduced-motion`       | `global.css`                                       |
+| Visible `:focus-visible` everywhere; touch targets ≥ 44×44         | axe + `.hit-target`                                |
+| Colour is never the only channel for meaning                       | axe + `StatusBadge` design                         |
 
 And these are prohibitions:
 
@@ -156,7 +156,7 @@ map or chart island, and shipping an unused map runtime would break the dependen
 
 - `ImpactStrip` has a `scope` variant that renders a dashed tile with a
   "SCOPE, NOT A RESULT" label. It exists so a project with no implementation cannot look
-  like one with results. The content schema *fails the build* if a planned project has an
+  like one with results. The content schema _fails the build_ if a planned project has an
   unscoped stat. Restyle it freely; do not make it look the same as a result tile.
 - `StatusBadge` distinguishes statuses by dot fill and border style as well as colour,
   because colour alone is not an accessible channel.

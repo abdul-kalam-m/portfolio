@@ -1,7 +1,17 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*"],
-  "exclude": ["dist", "node_modules", "test-results", "playwright-report"],
+  "exclude": [
+    "dist",
+    "node_modules",
+    "test-results",
+    "playwright-report",
+    "design-bundle",
+    // Vendored third-party bundles and the ported lab tool: not ours to type-check, and
+    // scanning them buries real diagnostics under thousands of minified-source hints.
+    "public/labs",
+    "scripts/vendor"
+  ],
   "compilerOptions": {
     "strictNullChecks": true,
     "allowJs": true,

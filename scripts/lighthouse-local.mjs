@@ -90,7 +90,8 @@ for (const route of ROUTES) {
     const value = audit.numericValue;
     const ok = value <= max;
     if (!ok) failures += 1;
-    const shown = unit === 'bytes' ? `${Math.round(value / 1024)} KB` : `${Math.round(value)}${unit}`;
+    const shown =
+      unit === 'bytes' ? `${Math.round(value / 1024)} KB` : `${Math.round(value)}${unit}`;
     const cap = unit === 'bytes' ? `${Math.round(max / 1024)} KB` : `${max}${unit}`;
     console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${label.padEnd(15)} ${shown} (max ${cap})`);
   }

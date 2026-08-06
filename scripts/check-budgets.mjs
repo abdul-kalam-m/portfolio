@@ -45,9 +45,7 @@ async function walk(dir) {
 }
 
 const allFiles = await walk(DIST);
-const byUrl = new Map(
-  allFiles.map((f) => [`/${path.relative(DIST, f).replace(/\\/g, '/')}`, f])
-);
+const byUrl = new Map(allFiles.map((f) => [`/${path.relative(DIST, f).replace(/\\/g, '/')}`, f]));
 
 const gz = (buf) => gzipSync(buf).length;
 const kb = (n) => `${(n / 1024).toFixed(1)} KB`;

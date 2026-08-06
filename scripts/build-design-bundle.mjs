@@ -103,17 +103,19 @@ for (const [name, spec] of FONTS) {
 
 /** Rewrites every @font-face src to the two files we copied. */
 function localiseFonts(sheet) {
-  return sheet
-    .replace(
-      /url\(["']?[^"')]*inter-latin-wght-normal\.woff2[^"')]*["']?\)/g,
-      'url("../fonts/inter.woff2")'
-    )
-    .replace(
-      /url\(["']?[^"')]*jetbrains-mono-latin-wght-normal\.woff2[^"')]*["']?\)/g,
-      'url("../fonts/jetbrains-mono.woff2")'
-    )
-    // Drop every remaining webfont reference; the stacks fall back to system-ui.
-    .replace(/@font-face\s*\{[^}]*url\(["']?\/(?:node_modules|@fs)[^}]*\}/g, '');
+  return (
+    sheet
+      .replace(
+        /url\(["']?[^"')]*inter-latin-wght-normal\.woff2[^"')]*["']?\)/g,
+        'url("../fonts/inter.woff2")'
+      )
+      .replace(
+        /url\(["']?[^"')]*jetbrains-mono-latin-wght-normal\.woff2[^"')]*["']?\)/g,
+        'url("../fonts/jetbrains-mono.woff2")'
+      )
+      // Drop every remaining webfont reference; the stacks fall back to system-ui.
+      .replace(/@font-face\s*\{[^}]*url\(["']?\/(?:node_modules|@fs)[^}]*\}/g, '')
+  );
 }
 
 const inlineCache = new Map();
