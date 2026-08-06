@@ -1,0 +1,105 @@
+---
+title: Integrated Sponge City Approach for Kosasthalaiyar Basin
+hook: Systematizing blue-green infrastructure across 170 acres into 3 street tiers and 3 open-space types.
+section: urban-design
+tier: standard
+year: 2023
+status: published
+order: 23
+tags:
+  - urban-design
+  - flood
+  - climate
+  - planning
+stats:
+  - value: '170'
+    label: Acres in the feasibility study area
+  - value: '3'
+    label: Street tiers systematized — primary, secondary, tertiary
+  - value: '3'
+    label: Open-space categories — major, local, wasteland
+  - value: '6'
+    label: Person design team
+thumbnail: ../../assets/projects/kosasthalaiyar-sponge-city/thumbnail.png
+thumbnailAlt: Aerial land-cover map of a dense residential neighborhood in Chennai's Kosasthalaiyar basin beside a diagram of a green blue-infrastructure intervention framework threading through the same street grid toward Periyathoppu Lake.
+---
+
+import Figure from '../../components/Figure.astro';
+import ProvenanceTable from '../../components/ProvenanceTable.astro';
+import aerialBgi from '../../assets/projects/kosasthalaiyar-sponge-city/aerial-bgi-framework.png';
+import interventionCatalogue from '../../assets/projects/kosasthalaiyar-sponge-city/intervention-catalogue.png';
+
+{/* DRAFT: owner review — written from "Professional Portfolio - Abdul Kalam 10MB.pdf" pp. 11-12, as Project Architect / Design & Technical Lead, Sponge Collaborative, for Greater Chennai Corporation. */}
+
+## Problem
+
+Chennai's grey stormwater infrastructure was not built for the rainfall the city now sees.
+The Kosasthalaiyar basin needed a feasibility study for blue-green infrastructure (BGI) and
+nature-based solutions that could actually be layered onto an existing, dense residential
+grid — not a clean-slate redesign, but a retrofit strategy for streets, open spaces, and
+private plots as they already exist around MMDA Colony.
+
+## Approach
+
+As design and technical lead, I co-led the team through a Detailed Feasibility Report and
+Technical Project Report for a ~170-acre study area, and a Detailed Project Report for a
+sponge-park pilot site within it. Detailed runoff coefficients and dynamic modeling in EPA's
+Stormwater Management Model (SWMM) quantified what each intervention would actually do to
+runoff, rather than relying on rule-of-thumb estimates.
+
+<Figure
+  src={aerialBgi}
+  alt="Aerial land-cover map of a dense residential grid in MMDA Colony, Chennai, bordered by Chinnamattur Road, Kamaraj Road, and Periyathoppu Lake, beside a diagram of the same grid overlaid with a green blue-infrastructure intervention network connecting parks, schools, and open spaces via primary and secondary green corridors."
+  caption="The retrofit logic in one pair of images: the existing block-by-block land cover on the left becomes the substrate for a connected BGI network on the right — corridors, not isolated interventions."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 11."
+  variant="full"
+/>
+
+<ProvenanceTable
+  caption="Methods behind the feasibility study."
+  rows={[
+    {
+      source: 'EPA SWMM',
+      product: 'Dynamic runoff-coefficient modeling',
+      access: 'Applied to quantify BGI impact',
+    },
+    {
+      source: 'Hydrological modeling',
+      product: 'Flooding-node identification in stormwater conduits',
+      access: 'Team-developed methodology',
+    },
+    {
+      source: 'Site survey and GIS mapping',
+      product: 'Detailed land-cover classification',
+      access: 'Field survey + desk GIS',
+    },
+  ]}
+/>
+
+## Results
+
+The interventions are systematized rather than bespoke: three street tiers — primary,
+secondary, tertiary — each get a matched catalogue running from simple (tree planting,
+bioswales) to advanced (rain gardens with storage, rainwater harvesting), and three open-space
+types — major, local, and wasteland — get the same simple-to-advanced treatment scaled to
+their size and existing condition.
+
+<Figure
+  src={interventionCatalogue}
+  alt="A catalogue of before-and-after isometric diagrams for primary, secondary, and tertiary streets and for major, local, and wasteland open spaces, each showing a baseline condition, a simple intervention, and an advanced intervention, alongside two street-section diagrams comparing the existing storm-drain-only scenario against a proposed scenario with bioswales, storage tanks, recharge pits, and permeable wetland at the outfall."
+  caption="Every street tier and open-space type gets the same simple-to-advanced ladder, so a municipality can fund the cheap intervention first and the expensive one later without redesigning anything."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 12."
+  variant="full"
+/>
+
+The street-section comparison makes the payoff legible end to end: the existing scenario
+routes everything to a storm drain and an outfall point: the proposed scenario intercepts
+water at every stage — storage tanks, recharge pits, bioswales, sunken courts — before it
+ever reaches the lake.
+
+## What I'd do differently
+
+The feasibility report quantifies runoff reduction per intervention type but not the
+maintenance burden each one adds for the corporation that has to keep it working after
+handover. A five-year operations cost alongside the capital cost would make the
+simple-versus-advanced choice a genuine trade-off rather than an obviously-better one.

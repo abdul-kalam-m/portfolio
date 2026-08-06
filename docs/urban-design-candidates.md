@@ -1,6 +1,12 @@
 # Urban Design & Climate Resilience — candidate projects
 
-**Status: proposal. Nothing here is published.**
+**Status: 6 of 11 approved and published, 2026-08-06.** The owner approved candidates 1
+(Adyar Basin Vision Framework), 2 (Woodbridge), 3 (Pedestrian-Heavy Areas Crash Rates), 4
+(Kosasthalaiyar Sponge City), 6 (TSUCE — published as "A Living-Learning Laboratory for
+Smart Urbanization," its own subtitle in the source PDF), and 11 (Lakefront, published under
+its own framework name "Restore + Connect + Engage"). Candidates 5, 7, 8, 9, and 10 remain
+unapproved and unpublished — see their entries below for what was proposed and why they were
+held back.
 
 `OPERATING_GUIDE.md` §10.4 requires that this list be extracted from the source portfolio
 PDFs and proposed to the owner _before_ the section publishes. §13.5.6 makes publishing

@@ -9,16 +9,20 @@ token system, no UI kit, and a hard accessibility and performance gate in CI.
 
 ## What's here
 
-| Section                           | Projects                                                                                    |
-| --------------------------------- | ------------------------------------------------------------------------------------------- |
-| Geospatial Intelligence           | NJ Parcel Flood Risk Dashboard, NJ Hazard Vulnerability Dashboard, FloodScope               |
-| Data Engineering & Applied AI     | AutoCarto-Agent, India Urban Heat Dashboard, Jurisdiction Intelligence OS                   |
-| Urban Design & Climate Resilience | In preparation — see [`docs/urban-design-candidates.md`](./docs/urban-design-candidates.md) |
+| Section                           | Projects                                                                                                                                                        |
+| --------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Geospatial Intelligence           | NJ Parcel Flood Risk Dashboard, NJ Hazard Vulnerability Dashboard, FloodScope                                                                                   |
+| Data Engineering & Applied AI     | AutoCarto-Agent, India Urban Heat Dashboard, Jurisdiction Intelligence OS                                                                                       |
+| Urban Design & Climate Resilience | Adyar Basin Vision Framework, Woodbridge, Pedestrian-Heavy Areas Crash Rates, Kosasthalaiyar Sponge City, TSUCE, Restore + Connect + Engage (Chennai Lakefront) |
 
-Two projects are built and shipped with verified numbers. Four are fully specified with
-committed build guides and **no implementation yet** — they are labeled `planned` on the
-card and on the page, their stat tiles are marked as scope rather than results, and the
-content schema fails the build if that ever stops being true.
+Two data-ai/geospatial projects are built and shipped with verified numbers; the six
+urban-design projects are completed academic, professional, and competition work sourced
+from the owner's design portfolio (owner-approved for publication 2026-08-06 — see
+[`docs/urban-design-candidates.md`](./docs/urban-design-candidates.md)). The remaining four
+geospatial/data-ai projects are fully specified with committed build guides and **no
+implementation yet** — they are labeled `planned` on the card and on the page, their stat
+tiles are marked as scope rather than results, and the content schema fails the build if
+that ever stops being true.
 
 `/labs/heat-dashboard/` hosts the live India Urban Heat Dashboard: 50 cities, Open-Meteo
 forecast and ERA5 archive data, with a committed snapshot fallback so an API outage shows
@@ -45,10 +49,13 @@ pnpm preview
 ## Checks
 
 ```bash
+pnpm verify                       # the whole local gate — same set CI runs
 pnpm check                        # astro check + TypeScript
 pnpm test                         # Playwright e2e + axe-core, always against a fresh build
 node scripts/check-contrast.mjs   # every declared token pair vs WCAG 2.2 AA
 node scripts/check-links.mjs      # internal links across dist/
+node scripts/check-budgets.mjs    # JS + page-weight budgets from the built output
+node scripts/audit-claims.mjs     # every published figure vs its source repo or PDF
 ```
 
 All of these run in CI on every push and pull request, plus Lighthouse against the §8.4
@@ -84,6 +91,5 @@ everything currently generated points at the `abdulkalam.pages.dev` placeholder.
 
 ## Open items
 
-Tracked in [`DECISIONS.md`](./DECISIONS.md). The ones needing an owner decision: the
-production domain, which résumé variant to feature, which contact email wins, and approval
-of the urban-design project list.
+Tracked in [`DECISIONS.md`](./DECISIONS.md). The one still needing an owner decision: the
+production domain — every QR code on the site is provisional until it's set.

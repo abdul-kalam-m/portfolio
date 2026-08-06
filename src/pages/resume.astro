@@ -4,108 +4,201 @@ import PageHeader from '../components/PageHeader.astro';
 import { OWNER, RESUME } from '../lib/site';
 
 /*
-  DRAFT: owner review — transcribed verbatim from
-  "Analyst Resume_Abdul Kalam (2-Page).pdf". §13.5.7 locks résumé content: nothing here
-  may be embellished, and figures are reproduced exactly as the PDF states them.
-
-  Planner and Transportation Planner variants of the résumé also exist; swapping which one
-  the site features is a one-line change in src/lib/site.ts plus the file in public/files/.
+  Transcribed verbatim from AbdulKalam_Resume.docx, owner-provided 2026-08-04.
+  §13.5.7 locks résumé content: nothing here may be embellished, and figures are
+  reproduced exactly as the source document states them.
 */
+
+const summary =
+  'GIS specialist with 5+ years of hands-on Esri ArcGIS experience across the full geospatial data stack, including data management, spatial and statistical analysis, and visualization. Currently working at the NJ Climate Change Resource Center, supporting build-out analyses for municipal CCRHVA Plans and the digitization of statewide hazard mitigation plans. Develops documented workflows, maintains QA/QC-governed spatial datasets, and automates analytical workflows using ArcGIS ModelBuilder and ArcPy. Skilled in ArcGIS Pro, ArcGIS Online, and StoryMaps, with experience producing metadata and methodology documentation that meets Center standards and communicating data-driven findings to research teams and external stakeholders.';
+
+const skills = [
+  {
+    group: 'GIS platforms (Esri)',
+    items: [
+      'ArcGIS Pro',
+      'ArcGIS Online',
+      'ArcCatalog',
+      'ArcGIS Enterprise',
+      'Story Maps',
+      'Survey123',
+      'Hosted Feature Layers',
+      'Network Analyst',
+      'ModelBuilder',
+    ],
+  },
+  {
+    group: 'Analysis toolkits',
+    items: [
+      'Spatial Analyst',
+      'Spatial Statistics',
+      'geostatistics',
+      'spatial autocorrelation',
+      'suitability & vulnerability analysis',
+      'raster / map algebra',
+      'build-out analysis',
+      '3D analysis',
+    ],
+  },
+  {
+    group: 'Scripting & automation',
+    items: ['Python / ArcPy', 'FME ETL', 'Census APIs', 'NJ Geocoder', 'SQL'],
+  },
+  {
+    group: 'Data management & governance',
+    items: [
+      'Spatial & tabular data management',
+      'metadata & methodology documentation',
+      'QA/QC protocols',
+      'geodatabase design',
+      'dataset publication',
+      'spatial databases',
+    ],
+  },
+  {
+    group: 'Statistics & machine learning',
+    items: [
+      'R',
+      'statistical analysis',
+      'XGBoost',
+      'SMOTE',
+      'GridSearchCV',
+      'Power BI',
+      'Tableau',
+      'data visualization',
+    ],
+  },
+  {
+    group: 'Domain data',
+    items: [
+      'Climate change',
+      'demographic (ACS/Census)',
+      'environmental',
+      'planning',
+      'hazard mitigation',
+      'critical infrastructure',
+    ],
+  },
+];
 
 const experience = [
   {
-    org: 'Rutgers Center on Law, Inequality, and Metropolitan Equity (CLiME)',
-    where: 'New Jersey',
-    role: 'Geospatial Research Assistant',
-    period: 'January 2025 – present',
+    org: 'New Jersey Climate Change Resource Center',
+    where: 'New Brunswick, NJ',
+    role: 'Graduate Research Assistant',
+    subrole: 'Data management, spatial analysis & visualization',
+    period: 'March 2026 – present',
     points: [
-      'Conducts spatial research on housing affordability and rent-burdened populations in New Jersey using ArcGIS and Python.',
-      'Automated data pipelines for extracting and transforming housing certificates of occupancy, building permits, and population demographics.',
-      'Applied automation and geospatial techniques to improve the efficiency, accuracy, and scalability of the analysis process.',
-      'Generated detailed reports for publication, highlighting affordability challenges and their policy implications.',
+      'Support data analysis and visualization for the NJ Climate Change Resource Center and its climate-impact programs, working with foundational spatial datasets that inform guidance and actionable science for stakeholders.',
+      'Lead dataset and workflow development for statewide hazard mitigation planning, digitizing Hazard Mitigation Plans across all 21 New Jersey counties among a team of full-time and graduate student staff.',
+      'Automated analytical workflows in ModelBuilder and Python (ArcPy), including a build-out analysis pipeline that raised operational efficiency by 60% and accelerated delivery.',
+      'Developed and documented methodologies, metadata, and QA/QC procedures for county-wide datasets, ensuring data integrity and integration to Center and University publication standards.',
+      'Conducted build-out analyses for 7 municipalities under multiple flood inundation scenarios (FEMA 1%, 1%+3 ft, 2 ft, 5 ft) to support Climate Change Hazard Vulnerability Assessments.',
+      'Built a Survey123 data-collection solution integrated with Hosted Feature Layers to standardize a Hazard Mitigation Action Tracker, cutting manual data-entry errors by 95% and raising geocoding accuracy to 100%.',
+    ],
+  },
+  {
+    org: 'Rutgers CLiME Lab',
+    where: 'Newark, NJ',
+    role: 'Research & Development Analyst',
+    subrole: 'Data manipulation, spatial analysis & statistics',
+    period: 'January 2025 – September 2026',
+    points: [
+      'Engineered automated data pipelines (Python, Census APIs) that reduced processing time by 60%, and used ArcGIS to visualize housing and homelessness disparities across New Jersey.',
+      'Authored data-driven policy findings for a housing-affordability publication covering 12 New Jersey cities, presented to municipal planning officials.',
     ],
   },
   {
     org: 'Sponge Collaborative',
-    where: 'India',
-    role: 'Geospatial and Climate Change Analyst',
-    period: 'January 2023 – July 2024',
+    where: 'Chennai, India',
+    role: 'Urban Designer & Policy Advisor',
+    subrole: 'Design, planning and policy implications, RFPs, client and project management',
+    period: 'August 2021 – July 2024',
     points: [
-      "Led hydrological GIS modeling for Chennai's flood resilience using ArcGIS, QGIS, and SWMM.",
-      'Developed GIS-based processing tools for high-resolution urban flood risk mapping, integrating land use / land cover, building footprints, drainage networks, topography, and groundwater recharge potential.',
-      'Conducted spatial and environmental data analysis for a 360-acre neighborhood, enhancing groundwater infiltration by 13%.',
-      'Designed flood mitigation strategies that improved resilience from 2-year to 5-year return-period floods across a 180-acre flood-prone region.',
-      'Co-authored the Sponge Park Handbook, guiding the prioritization of 1,000 sponge parks through a spatial modeling framework.',
-      'Conducted carbon sequestration analysis with TU Berlin, quantifying 103.3 tons of CO₂ storage potential using the MRV system.',
-      'Built multi-scalar geospatial models for stormwater storage and groundwater recharge prediction.',
+      'Developed geospatial models in ArcGIS to identify 1,000 candidate sponge-park sites by ecological, social, and financial criteria; conducted cost-benefit analysis feeding $12M in implementation funding.',
+      'Integrated BIM (Revit) and CAD-to-GIS for site selection across 122 candidate sites, streamlining the process by 45% and saving 70% of analysis labor.',
+      'Co-authored feasibility studies and institutional gap analyses supporting a $9M National Disaster Management Authority grant; authored a "Sponge Parks" handbook adopted by Greater Chennai Corporation.',
     ],
   },
 ];
 
 const projects = [
   {
-    name: 'Flood Vulnerability Mapping, Woodbridge Township, New Jersey',
+    name: 'Urban Heat Vulnerability Analysis, City of Newark',
     points: [
-      'Developed GIS-based risk assessment models identifying flood-prone residential zones in ArcGIS.',
-      'Identified 163 land parcels in danger of future flooding from sea-level rise and inundation.',
-      'Mapped 93.8% of critical wetlands under extreme commercial and residential development pressure.',
+      'Multi-criteria raster (Spatial Analyst / map algebra) model combining land surface temperature and ACS demographics to identify populations most exposed to extreme heat.',
     ],
   },
   {
-    name: 'Sponge Park Framework for Resilient Open Spaces',
+    name: 'Flood Vulnerability Mapping, Woodbridge Township',
     points: [
-      'Co-authored a comprehensive handbook guiding decision-makers implementing sponge parks on a ₹250 crore budget.',
-      'Developed geospatial models in ArcGIS identifying 1,000 sponge parks on ecological, social, and financial criteria.',
-      'Quantified the impact of blue-green infrastructure with SWMM, finding a 2–3× increase in soil storage capacity and 15% reduced runoff.',
-      'Conducted cost-benefit analysis identifying 42% NPV comparing green against grey infrastructure for 5- and 25-year return-period storms.',
+      'ArcGIS sea-level-rise risk models identifying 163 at-risk residential parcels and 93.8% of critical wetlands under development pressure.',
     ],
   },
   {
-    name: 'NEBDHub & NSDC Transportation Data Science Project',
+    name: 'Crash Severity Prediction, NYC (Machine Learning)',
     points: [
-      'Analyzed NYC OpenData transportation data covering 2012 to 2024 to understand crash patterns.',
-      'Completed six milestones in Python, including data cleaning and time-series analysis.',
-      'Identified 11 high-risk intersections for targeted safety improvements, with recommendations to NYCDOT.',
+      'XGBoost models on collision and weather data with SMOTE and GridSearchCV tuning, reaching a weighted F1 of 0.64.',
+    ],
+  },
+  {
+    name: 'Suitability & Network Analysis, 3D City Modeling',
+    points: [
+      'ModelBuilder suitability modeling, ArcGIS Network Analyst datasets, and CityEngine procedural 3D visualization; geostatistics and spatial autocorrelation.',
     ],
   },
 ];
 
 const education = [
   {
-    school: 'Rutgers University',
-    period: 'Expected',
+    school: 'Rutgers University, Bloustein School',
+    period: 'Expected Dec 2026',
     lines: [
-      'Master of Public Informatics — GIS and spatial data analysis',
-      'Master of City Planning — environmental and climate change planning',
+      'Master of City and Regional Planning',
+      'Graduate Certificate in Geospatial Information Science and Technology',
     ],
   },
   {
-    school: 'Anna University',
-    period: '2016–2021',
-    lines: ['Bachelor of Architecture — architecture and urban design'],
+    school: 'Anna University, School of Architecture & Planning',
+    period: 'May 2021',
+    lines: ['Bachelor of Architecture, First Class'],
+  },
+];
+
+const certifications = [
+  {
+    org: 'Columbia University and Northeast Big Data Innovation Hub',
+    period: '2025',
+    line: 'National Student Data Corps (NSDC) — Transportation Data Science Program',
+  },
+  {
+    org: 'IIT-Madras',
+    period: '2022',
+    line: 'UK-India-Brazil Winter School on Sustainable Urban Drainage Systems (SuDS) — Professor Balaji Narasimhan, Department of Civil Engineering',
+  },
+  {
+    org: 'Columbia GSAPP',
+    period: '2024',
+    line: 'Affirmations, Fall and Spring 2023–24 cohort — curated by Andrés Jaque and Bart-Jan Polman',
   },
 ];
 
 const honors = [
-  'Winner, Chennai Lakefront Rejuvenation Competition, CMDA (2023)',
-  'Nominated, National Awards for Excellence in Architectural Thesis, Council of Architecture (2022)',
-  'Nominated, JK AYA Best Architecture Student of the Year Award, JK Cement (2022)',
-  'Nominated, Thesis of the Year Awards, ARCASIA (2021)',
-  'Finalist, Telangana State Urban Center of Excellence, NIUA (2021)',
-  'Licensed Architect, Council of Architecture, India — CA/2023/158480',
+  'Winner, Chennai Lakefront Rejuvenation Competition, Chennai Metropolitan Development Authority (2023)',
+  'Nominated, National Awards for Excellence in Architectural Thesis, Council of Architecture, India (2022)',
 ];
 ---
 
 <BaseLayout
   title="Résumé"
-  description="Geospatial data analyst and urban planner: climate resilience, risk modeling, and GIS-based hazard assessment. Full résumé with a downloadable PDF."
+  description="GIS specialist with 5+ years of Esri ArcGIS experience across climate resilience, hazard mitigation, and spatial analysis. Full résumé with a downloadable PDF."
   path="/resume/"
   image="/og/resume.png"
 >
   <PageHeader
     eyebrow="Résumé"
-    title="Geospatial data analyst and urbanist"
-    lead="Climate resilience, risk modeling, and GIS-based spatial and hazard assessment, with a working specialization in spatial analytics, Python, and machine learning for geospatial data."
+    title="GIS specialist — climate resilience & hazard analysis"
+    lead={summary}
   >
     <p class="download">
       <a class="btn" href={RESUME.href} download>Download the résumé (PDF, 2 pages)</a>
@@ -114,7 +207,21 @@ const honors = [
 
   <div class="container-page sheet">
     <section class="block">
-      <h2>Experience</h2>
+      <h2>Technical skills</h2>
+      <div class="skills">
+        {
+          skills.map((skill) => (
+            <div class="skill">
+              <p class="skill-group">{skill.group}</p>
+              <p class="skill-items">{skill.items.join(' · ')}</p>
+            </div>
+          ))
+        }
+      </div>
+    </section>
+
+    <section class="block">
+      <h2>Professional experience</h2>
       {
         experience.map((job) => (
           <article class="entry">
@@ -125,6 +232,7 @@ const honors = [
               <p class="meta tnum">
                 {job.where} · {job.period}
               </p>
+              <p class="subrole">{job.subrole}</p>
             </header>
             <ul>
               {job.points.map((point) => (
@@ -137,7 +245,7 @@ const honors = [
     </section>
 
     <section class="block">
-      <h2>Selected projects</h2>
+      <h2>Selected GIS projects</h2>
       {
         projects.map((project) => (
           <article class="entry">
@@ -171,7 +279,23 @@ const honors = [
     </section>
 
     <section class="block">
-      <h2>Honors and recognition</h2>
+      <h2>Certifications</h2>
+      {
+        certifications.map((cert) => (
+          <article class="entry">
+            <h3>
+              {cert.org} <span class="meta tnum">· {cert.period}</span>
+            </h3>
+            <ul>
+              <li>{cert.line}</li>
+            </ul>
+          </article>
+        ))
+      }
+    </section>
+
+    <section class="block">
+      <h2>Competition honors</h2>
       <ul class="entry">
         {honors.map((honor) => <li>{honor}</li>)}
       </ul>
@@ -236,6 +360,24 @@ const honors = [
     color: var(--color-text-muted);
   }
 
+  .skills {
+    margin-top: var(--space-5);
+    display: grid;
+    gap: var(--space-4);
+  }
+
+  .skill-group {
+    font-size: var(--text-sm);
+    font-weight: 620;
+  }
+
+  .skill-items {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    color: var(--color-text-muted);
+    text-wrap: pretty;
+  }
+
   .entry {
     margin-top: var(--space-6);
   }
@@ -255,6 +397,13 @@ const honors = [
     font-size: var(--text-sm);
     font-weight: 400;
     color: var(--color-text-subtle);
+  }
+
+  .subrole {
+    margin-top: var(--space-1);
+    font-size: var(--text-sm);
+    font-style: italic;
+    color: var(--color-text-muted);
   }
 
   .entry ul {

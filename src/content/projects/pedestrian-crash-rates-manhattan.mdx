@@ -1,0 +1,96 @@
+---
+title: Impact of Proximity to Pedestrian-Heavy Areas on Crash Rates
+hook: Overlaying 1,000-ft pedestrian buffers on 13 years of NYC crash data to flag 11 intersections.
+section: urban-design
+tier: standard
+year: 2025
+status: published
+order: 22
+tags:
+  - gis
+  - urban-design
+  - planning
+  - policy
+alsoIn:
+  - geospatial
+stats:
+  - value: '1,000 ft'
+    label: Buffer radius around every school and park
+  - value: '13'
+    label: Years of NYC crash data analyzed, 2012–2024
+  - value: '11'
+    label: Priority intersections identified for safety intervention
+  - value: '6'
+    label: Milestones completed in the certificate program
+thumbnail: ../../assets/projects/pedestrian-crash-rates-manhattan/thumbnail.png
+thumbnailAlt: Three side-by-side maps of Midtown Manhattan showing pedestrian-heavy buffer zones around schools and parks, a point map of pedestrian fatality and injury locations, and 11 numbered priority intersections identified for safety intervention.
+---
+
+import Figure from '../../components/Figure.astro';
+import DetailsBlock from '../../components/DetailsBlock.astro';
+import priorityIntersections from '../../assets/projects/pedestrian-crash-rates-manhattan/priority-intersections.png';
+import collisionDensity from '../../assets/projects/pedestrian-crash-rates-manhattan/collision-density.png';
+
+{/* DRAFT: owner review — written from "Professional Portfolio - Abdul Kalam 10MB.pdf" pp. 9-10, National Student Data Corps Transportation Data Science Program, Columbia University and Northeast Big Data Innovation Hub. */}
+
+## Problem
+
+Schools, parks, and community centers concentrate pedestrians — which means they also
+concentrate the conflicts between pedestrians and vehicles. The question this project asked:
+does proximity to these pedestrian-heavy areas actually predict where severe pedestrian and
+cyclist crashes happen in Midtown Manhattan, and if so, precisely where should the city
+intervene first?
+
+## Approach
+
+Using NYC Motor Vehicle Collision data covering 2012 to 2024, I mapped every school and park
+in Midtown Manhattan with a 1,000-foot buffer to define pedestrian-heavy zones, then overlaid
+pedestrian KSI (killed or severely injured) incidents against those buffers to test the
+proximity hypothesis directly.
+
+<Figure
+  src={collisionDensity}
+  alt="Left: scatter plot of pedestrian KSI incidents against distance from nearby schools and parks, showing incidents concentrated within 1,000 feet. Centre: bar chart of collision counts by distance from schools and parks, peaking near zero distance. Right: a citywide collision-density heatmap of the NYC metro area with the densest concentration over Manhattan."
+  caption="Both the KSI scatter and the raw collision counts drop off sharply past the 1,000-foot buffer — the proximity hypothesis holds in the data before any spatial overlay is built."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 9. Data: NYC Motor Vehicle Collisions (NYPD), NYC OpenData, 2012–2024."
+  variant="full"
+/>
+
+<DetailsBlock summary="Technical detail — from buffer to priority list">
+
+The workflow moved through three explicit spatial steps rather than one combined query, so
+each stage could be checked on its own:
+
+1. **Map pedestrian-heavy zones.** Schools and parks (parks above 0.5 acres) geocoded and
+   buffered at 1,000 feet, producing a contiguous zone across most of Midtown.
+2. **Map KSI incidents inside those zones.** Point locations sized by fatality count,
+   revealing concentration at specific intersections and corridors rather than uniform risk.
+3. **Overlay the two** to rank intersections by where crash severity and pedestrian activity
+   actually converge — not just where either one is high alone.
+
+Six certificate-program milestones structured the work: data preparation, data ethics,
+pre-processing and exploration, time-series analysis, geospatial analysis, and a self-guided
+research question with a virtual poster board for data storytelling.
+
+</DetailsBlock>
+
+## Results
+
+<Figure
+  src={priorityIntersections}
+  alt="Three-panel map series of Midtown Manhattan: pedestrian-heavy buffer zones around schools and parks, a point map of pedestrian KSI incidents sized by fatality count, and a final map of 11 numbered priority intersections along the north-south avenues and cross streets in the 30s and 40s, each keyed to a named intersection in the legend."
+  caption="Overlapping the buffered pedestrian zones with KSI counts narrows Midtown down to 11 priority intersections — a list specific enough for a transportation department to act on directly."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 10."
+  variant="full"
+/>
+
+The 11 identified intersections span both avenues and cross streets rather than clustering
+on one corridor, which argues against a single-corridor fix and for intersection-specific
+countermeasures: traffic-calming, advanced pedestrian signals, and enhanced crosswalk
+design, backed by proactive monitoring as new crash data arrives.
+
+## What I'd do differently
+
+The buffer is uniform at 1,000 feet regardless of a school's enrollment or a park's foot
+traffic. Weighting the buffer by a proxy for actual pedestrian volume — rather than treating
+every school and park as an equal generator — would sharpen the priority list further.

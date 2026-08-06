@@ -21,6 +21,22 @@ import path from 'node:path';
 const CARTOLLM = 'C:/Users/abdul/Desktop/Temporary Files/RUTGERS/Portfolio Projects/CartoLLM';
 const HEAT_CASE_STUDY =
   'C:/Users/abdul/Desktop/Temporary Files/RUTGERS/Small Portfolio/Urban Heat Dashboard/CASE_STUDY.md';
+/*
+ * Vendored 2026-08-06 from "Professional Portfolio - Abdul Kalam 10MB.pdf" (Works to be
+ * displayed) via pypdf per-page text extraction — see scripts/vendor/portfolio-pdf-text.json.
+ * Committed rather than read from the source PDF at audit time so the check is
+ * reproducible without that Drive path being mounted.
+ */
+const PORTFOLIO_PDF_TEXT = path.resolve('scripts/vendor/portfolio-pdf-text.json');
+
+/**
+ * Strips whitespace before comparing. The source PDF's design-heavy layout kerns some
+ * bold pull-quote numbers into "1 63" / "2 1 5" under text extraction even though the
+ * page renders "163" / "215" — confirmed by visual inspection of the rendered page
+ * (see docs/urban-design-candidates.md). Whitespace-insensitive matching is the honest
+ * way to check these without false-failing on a PDF-extraction artifact.
+ */
+const normalize = (s) => s.replace(/\s+/g, '');
 
 /** @type {{claim: string, sourceFile: string, mustContain: string, note: string}[]} */
 const CLAIMS = [
@@ -134,6 +150,42 @@ const CLAIMS = [
   },
 ];
 
+/**
+ * Claims checked against the portfolio PDF's extracted text, whitespace-normalized (see
+ * PORTFOLIO_PDF_TEXT above). Only the numbers that survive extraction cleanly are listed
+ * here — several of the urban-design stats (TSUCE's 600 kW / 68.25% / 34.25% / 30M L, the
+ * lakefront's 17-item legend, the 11 priority intersections) are set as vector/outline
+ * graphics in the source PDF rather than selectable text, so they were verified instead by
+ * direct visual inspection of the rendered page (recorded in the case study's figure
+ * captions and in docs/urban-design-candidates.md) rather than machine text-matching.
+ */
+const PDF_CLAIMS = [
+  {
+    claim: '215 acres, Watson-Crampton neighborhood',
+    page: 7,
+    mustContain: '215',
+    note: 'Woodbridge impact strip',
+  },
+  {
+    claim: '163 land parcels threatened by future flooding',
+    page: 7,
+    mustContain: '163',
+    note: 'Woodbridge impact strip + results section',
+  },
+  {
+    claim: '1,300 households removed by NJ Blue Acres',
+    page: 7,
+    mustContain: '1,300',
+    note: 'Woodbridge impact strip + problem statement',
+  },
+  {
+    claim: '120 acres rezoned to open-space conservation',
+    page: 7,
+    mustContain: '120',
+    note: 'Woodbridge impact strip + results section',
+  },
+];
+
 let failures = 0;
 
 console.log('Published figures vs their source of truth\n');
@@ -148,6 +200,25 @@ for (const claim of CLAIMS) {
   console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${claim.claim}`);
   console.log(`        ${claim.note}`);
   console.log(`        looked for "${claim.mustContain}" in ${path.basename(claim.sourceFile)}`);
+}
+
+// --------------------------------------------------------- urban-design PDF claims
+console.log('\nUrban-design figures vs the source portfolio PDF (whitespace-normalized)\n');
+
+if (existsSync(PORTFOLIO_PDF_TEXT)) {
+  const pages = JSON.parse(await readFile(PORTFOLIO_PDF_TEXT, 'utf8'));
+  for (const claim of PDF_CLAIMS) {
+    const source = normalize(pages[String(claim.page)] ?? '');
+    const ok = source.includes(normalize(claim.mustContain));
+    if (!ok) failures += 1;
+    console.log(`  ${ok ? 'PASS' : 'FAIL'}  ${claim.claim}`);
+    console.log(`        ${claim.note}`);
+    console.log(`        looked for "${claim.mustContain}" on PDF p. ${claim.page}`);
+  }
+} else {
+  console.log(
+    `  SKIP  ${PDF_CLAIMS.length} claim(s) — vendored text not reachable: ${PORTFOLIO_PDF_TEXT}`
+  );
 }
 
 // ---------------------------------------------------------------- planned projects

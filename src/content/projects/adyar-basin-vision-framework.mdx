@@ -1,0 +1,119 @@
+---
+title: Adyar Basin Vision Framework
+hook: A 10-goal strategy tying Chennai's urban growth to the ecology of a river basin.
+section: urban-design
+tier: standard
+year: 2023
+status: published
+order: 20
+tags:
+  - urban-design
+  - planning
+  - gis
+  - climate
+stats:
+  - value: '10'
+    label: Development goals structuring the framework
+  - value: '6'
+    label: Zones with tailored, zone-specific strategies
+  - value: '3'
+    label: Major Chennai river systems — Adyar is the southernmost
+  - value: '5'
+    label: Person core team, Sponge Collaborative
+thumbnail: ../../assets/projects/adyar-basin-vision-framework/thumbnail.png
+thumbnailAlt: Aerial rendering of the Adyar River corridor through Chennai, showing a continuous green eco-loop connecting Guindy National Park, sponge streets, resilient riparian edges, and the river's estuary at the coast.
+---
+
+import Figure from '../../components/Figure.astro';
+import ProvenanceTable from '../../components/ProvenanceTable.astro';
+import urbanizationImpact from '../../assets/projects/adyar-basin-vision-framework/urbanization-impact.png';
+import infrastructureRisk from '../../assets/projects/adyar-basin-vision-framework/infrastructure-risk.png';
+import visionAerial from '../../assets/projects/adyar-basin-vision-framework/vision-aerial.png';
+
+{/* DRAFT: owner review — written from "Professional Portfolio - Abdul Kalam 10MB.pdf" pp. 2-5, as Project Architect / Expert Stakeholder Facilitator, Sponge Collaborative. */}
+
+## Problem
+
+The Adyar is the southernmost of three major river systems running through Chennai, and its
+basin spans urban, peri-urban, and rural contexts in a single transect. Urbanization has
+been quietly rewriting the basin's hydrology: encroached waterbodies, riparian edges built
+up to the water line, contaminated recharge, and rising flood risk where a natural system
+used to absorb runoff. The basin needed a framework that could hold both a long-term
+planning horizon and short-term pilot projects in the same document — one that a
+municipality could actually act on.
+
+## Approach
+
+As project architect and expert stakeholder facilitator, I developed transect-level
+strategies for the basin, organized and ran the expert stakeholder workshop, reviewed
+zone-wise strategies, and built the evaluation matrix that scored them. The team collected,
+analyzed, and visualized the GIS datasets — watersheds, wetlands, water infrastructure, and
+land cover — that the framework is built on.
+
+<Figure
+  src={urbanizationImpact}
+  alt="Two hydrological cycle diagrams comparing a natural basin (precipitation, surface runoff, groundwater recharge, lakes and wetlands, estuary) against a modified, urbanized basin, alongside a map of the Adyar basin showing water transmission infrastructure, wetlands, and urban expansion pressure from Chennai's outer ring toward the Bay of Bengal."
+  caption="What urbanization does to a basin's hydrology, made explicit before the framework proposes anything: the modified cycle shows exactly which links — recharge, riparian edges, storage — have been broken."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 2. Underlying flood-retention research: Sponge Collaborative, National Remote Sensing Centre (NRSC/ISRO), unitar.org."
+  variant="full"
+/>
+
+The ten development goals are grouped under five themes — urban ecology, risk and
+resilience, culture and livelihoods, open space and access, and urban development and
+housing — and mapped onto six zones, each with its own tailored strategy. A zone with high
+flood risk prioritizes water retention and storage; a zone near Guindy National Park
+prioritizes conservation-compatible development. The strategies aren't generic best
+practice restated per zone — they follow from an infrastructure-and-risk thematic map built
+specifically for this basin.
+
+<Figure
+  src={infrastructureRisk}
+  alt="Infrastructure and risk thematic map of the Adyar basin showing metro corridors, the Outer Ring Road, hospitals, solid-waste transfer stations, a landfill site, encroachments along the river edge, and a proposed TNHB housing project, overlaid on the basin's water bodies."
+  caption="The ten goals, and the infrastructure-and-risk map that grounds the six zone strategies in real assets: hospitals, transit corridors, waste infrastructure, and encroachment along the river edge."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 3."
+  variant="full"
+/>
+
+<ProvenanceTable
+  caption="What the zone-wise strategies are built on."
+  rows={[
+    {
+      source: 'GIS basin datasets',
+      product: 'Watersheds, wetlands, water infrastructure, land cover',
+      access: 'Collected and analyzed by the project team',
+    },
+    {
+      source: 'National Remote Sensing Centre (NRSC/ISRO)',
+      product: 'Satellite and field-based flood retention assessment',
+      access: 'unitar.org',
+    },
+    {
+      source: 'Expert stakeholder workshop',
+      product: 'Priority-area review and zone-strategy feedback',
+      access: 'Organized and conducted by the project team',
+    },
+  ]}
+/>
+
+## Results
+
+The vision resolves into a single continuous move: an eco-loop that threads Guindy National
+Park's conservation core, "sponge streets" that let stormwater infiltrate rather than run
+off, a resilient riparian edge along the river itself, and heritage-district conservation
+where the river meets the city's older fabric — ending at a protected estuary and sandbar
+at the coast.
+
+<Figure
+  src={visionAerial}
+  alt="Full-bleed aerial rendering of the Adyar River from its inland reaches through Guindy National Park, Anna Salai, and Mylapore to its estuary at the Bay of Bengal, annotated with strategic moves: restoring quarries, eco-industrial development, sponge streets, resilient riparian edge, heritage district conservation, biodiversity interpretation, and sandbar protection."
+  caption="The vision in one image: one continuous strategic move along the length of the river, from inland quarry restoration to estuary sandbar protection."
+  source="Source: Professional Portfolio - Abdul Kalam 10MB.pdf, p. 5."
+  variant="full"
+/>
+
+## What I'd do differently
+
+The framework is strong on ecological and infrastructural logic but light on an explicit
+phasing and financing sequence — the kind of detail a municipality needs to move from
+vision to procurement. A companion capital-improvement schedule, zone by zone, would have
+made the framework immediately actionable rather than aspirational.

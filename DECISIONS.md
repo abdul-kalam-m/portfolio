@@ -78,19 +78,71 @@ measure 2.39:1 and 2.46:1 against their backgrounds — below WCAG 1.4.11's 3:1 
 UI. Now `#8a857b` and `#7a766d`, at 3.52:1 and 4.17:1. Caught by
 `scripts/check-contrast.mjs`, which is the reason that script exists.
 
-## 2026-08-06 — Urban Design & Climate Resilience ships with no projects
+## 2026-08-06 — Urban Design & Climate Resilience ships with no projects (superseded same day)
 
 §10.4 requires extracting the candidate list from the owner's portfolio PDFs and proposing
 it before publishing, and §13.5.6 prohibits publishing unapproved work. The section index
-therefore ships a designed "in preparation" state rather than an empty grid.
-`docs/urban-design-candidates.md` holds the extracted proposal. **NEEDS OWNER APPROVAL**
-before anything in that section publishes.
+shipped a designed "in preparation" state rather than an empty grid.
+`docs/urban-design-candidates.md` held the extracted proposal, pending approval.
+
+**Superseded the same day:** the owner approved 6 of the 11 candidates (Adyar Basin Vision
+Framework, Woodbridge, Pedestrian-Heavy Areas Crash Rates, Kosasthalaiyar Sponge City, TSUCE,
+and the Lakefront). All six are now published as full case studies; see the next entry. The
+"in preparation" empty state was removed from `src/pages/urban-design/index.astro` — the
+section now renders the standard project grid like the other two.
+
+## 2026-08-06 — Six urban-design projects published; two included client work
+
+The owner approved publishing candidates 1, 2, 3, 4, 6, and 11 from
+`docs/urban-design-candidates.md`. Two of the six are professional work for named public
+clients (Adyar Basin Vision Framework and Kosasthalaiyar Sponge City, both for Sponge
+Collaborative / Greater Chennai Corporation) — §13.5.6 makes that approval the owner's alone
+to give, and it was given explicitly, by name, rather than inferred.
+
+Figures for all six were rendered directly from
+`Works to be displayed\Professional Portfolio - Abdul Kalam 10MB.pdf` via
+`scripts/import-urban-design-figures.mjs`; full annotated spreads are used as-is, the same
+pattern as the AutoCarto figures. Page ranges were re-verified against the PDF's own project
+numbering after an initial mismatch: pages 13–15 (the unapproved "Climate Park &
+Archaeological Interpretation Centre") were caught before being attributed to the approved
+Kosasthalaiyar project, which is only pages 11–12.
+
+**Two years are estimated, not cited.** Adyar Basin Vision Framework and Woodbridge have no
+explicit date in the source PDF or either résumé. Both are set to 2023: Adyar Basin as the
+last year of the Sponge Collaborative engagement (Aug 2021–Jul 2024) that produced the
+team's other 2023-dated deliverables on the same basin family of projects; Woodbridge as the
+portfolio's own stated end year ("Selected Works 2016–2023"). The other four years (2021,
+2023 ×2, 2025) are each cited directly in a résumé or the PDF text — see
+`scripts/audit-claims.mjs` for the Woodbridge figures checked against the vendored PDF text.
+
+**Four stats are checked against the source PDF text; the rest were verified visually.**
+`scripts/vendor/portfolio-pdf-text.json` (pypdf extraction, committed 2026-08-06) lets
+`audit-claims.mjs` check Woodbridge's 215/163/1,300/120 figures automatically, whitespace-
+normalized to work around the PDF's kerning artifacts on bold pull-quote numbers. TSUCE's
+sustainability metrics (600 kW, 68.25%, 34.25%, 30M L), the lakefront's 17-item legend, and
+the 11 priority intersections are set as vector/outline graphics in the source PDF rather
+than selectable text — pypdf extracts almost nothing from those pages (confirmed: page 18
+extracts to 85 characters of unrelated labels). Those numbers were verified by direct visual
+inspection of the rendered page at high resolution instead, and are cited with a page number
+in each figure's caption.
 
 ## 2026-08-06 — The Drive staging scaffold is abandoned, not migrated
 
 `…\3. PORTFOLIO WEBSITE\Portfolio Projects\portfolio-staging\` is a stock
 `create astro --template minimal` scaffold inside Google Drive, which §6.2 forbids as a repo
 location. Nothing in it was worth carrying over. It is left in place, unused.
+
+## 2026-08-06 — The "Antigravity" folder is confirmed unproductive, as flagged
+
+A second, separate "Antigravity" folder was found later the same day at
+`C:\Users\abdul\Desktop\Temporary Files\RUTGERS\6. PORTFOLIO\3. PORTFOLIO WEBSITE\Antigravity\`
+— not the Drive tree searched at the start of the build, which is why it wasn't found
+initially. It contains a `.git` with zero commits and a `portfolio\` Astro scaffold last
+touched 2026-07-19, predating this build by weeks. Confirmed unproductive per the original
+brief ("ignore … if it does not have anything productive") and left untouched, with one
+exception: its `Works to be displayed\` subfolder was where the owner's current résumé
+(`AbdulKalam_Resume.docx`) was found — a convenient drop location, not evidence of an active
+parallel effort.
 
 ## 2026-08-06 — Production URL is a placeholder
 
@@ -99,14 +151,23 @@ requires QR codes to encode the canonical production URL, and a printed code can
 corrected. Every QR on the site is provisional until the real domain is set and the site is
 rebuilt.
 
-## 2026-08-06 — Résumé variant and contact email
+## 2026-08-06 — Résumé replaced with the owner-provided current version (resolved)
 
-**NEEDS OWNER APPROVAL.** Three résumé variants exist (Analyst, Planner, Transportation
-Planner); the Analyst one is featured as the best fit for the site's positioning. Swapping
-is a one-line change in `src/lib/site.ts` plus the file in `public/files/`. Separately, the
-guide's owner line gives `ar.abdulkalam.mustaq@gmail.com` while the résumé PDF gives
-`abdulkalam.mustaq@rutgers.edu`. The guide is canonical (§13.5.3) so the site uses the
-former, but one of the two should win everywhere.
+The owner provided a current résumé (`AbdulKalam_Resume.docx`, dated 2026-08-04, dropped in
+the "Antigravity" scaffold's `Works to be displayed\` folder — see the next entry) and asked
+for it to replace the earlier "Analyst" variant. It reflects a materially different current
+state: a new role (Graduate Research Assistant, NJ Climate Change Resource Center), updated
+CLiME Lab dates and scope, a corrected Sponge Collaborative title/dates
+("Urban Designer & Policy Advisor," Aug 2021–Jul 2024), and updated education (MCRP,
+Bloustein School, expected Dec 2026) and certifications.
+
+Converted docx → PDF via Word COM automation (`docx2pdf`, since neither LibreOffice nor a
+pure-Python renderer was available) to `public/files/AbdulKalam_Resume_2026-08.pdf`.
+`src/pages/resume.astro` and the relevant parts of `src/pages/about.astro` were rewritten to
+match it verbatim (§13.5.7). The superseded 2025-03 PDF was removed.
+
+**Contact email confirmed 2026-08-06:** the owner confirmed `ar.abdulkalam.mustaq@gmail.com`
+(the guide's value, §13.5.3) as correct site-wide. No code change was needed.
 
 ## 2026-08-06 — No headshot
 

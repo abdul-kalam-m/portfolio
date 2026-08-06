@@ -6,6 +6,12 @@ export const PROJECT_SLUGS = [
   'nj-hazard-vulnerability',
   'floodscope',
   'jurisdiction-intelligence-os',
+  'adyar-basin-vision-framework',
+  'woodbridge-flood-vulnerability',
+  'pedestrian-crash-rates-manhattan',
+  'kosasthalaiyar-sponge-city',
+  'tsuce-smart-urbanization',
+  'chennai-lakefront-restore-connect-engage',
 ] as const;
 
 export const SECTION_ROUTES = ['/geospatial/', '/data-ai/', '/urban-design/'] as const;

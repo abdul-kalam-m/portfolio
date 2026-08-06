@@ -6,69 +6,56 @@ import { OWNER, RESUME } from '../lib/site';
 import { personJsonLd } from '../lib/seo';
 
 /*
-  DRAFT: owner review — bio and skills transcribed from the résumé PDF (§13.5.7 locks
-  these facts, so nothing here is invented; anything unsupported by the PDF is omitted).
+  Bio and skills transcribed from AbdulKalam_Resume.docx, owner-provided 2026-08-04
+  (§13.5.7 locks these facts). The sidebar skills list is condensed from resume.astro's
+  full six-category breakdown — keep the two in sync when the résumé changes.
 */
 
 const skills = [
   {
-    group: 'GIS and spatial analysis',
-    items: ['ArcGIS', 'QGIS', 'PostGIS', 'Google Earth', 'Coordinate system transformations'],
+    group: 'GIS platforms (Esri)',
+    items: ['ArcGIS Pro', 'ArcGIS Online', 'ArcGIS Enterprise', 'ModelBuilder', 'Survey123'],
   },
   {
-    group: 'Python for geospatial data science',
-    items: ['GeoPandas', 'Rasterio', 'GDAL', 'Pyproj', 'NumPy', 'Pandas', 'Xarray', 'HyRiver'],
-  },
-  {
-    group: 'Remote sensing and climate modeling',
+    group: 'Analysis toolkits',
     items: [
-      'NDVI analysis',
-      'Land use / land cover classification',
-      'EPA SWMM',
-      'Hydrological impact modeling',
+      'Spatial Analyst',
+      'Spatial Statistics',
+      'geostatistics',
+      'suitability & vulnerability analysis',
+      'build-out analysis',
     ],
   },
   {
-    group: 'Machine learning for risk assessment',
-    items: ['Scikit-learn', 'K-means', 'DBSCAN', 'Random forest', 'LSTM', 'CNN', 'TensorFlow'],
+    group: 'Scripting & automation',
+    items: ['Python / ArcPy', 'FME ETL', 'Census APIs', 'NJ Geocoder', 'SQL'],
   },
   {
-    group: 'Big data and cloud GIS',
-    items: ['Google Earth Engine', 'OpenStreetMap API', 'US Census API', 'PUMS datasets'],
-  },
-  {
-    group: 'Visualization and communication',
-    items: [
-      'Tableau',
-      'Power BI',
-      'ArcGIS StoryMaps',
-      'Jupyter',
-      'Policy briefs',
-      'Stakeholder engagement',
-    ],
+    group: 'Statistics & machine learning',
+    items: ['R', 'XGBoost', 'SMOTE', 'GridSearchCV', 'Power BI', 'Tableau'],
   },
 ];
 
 const education = [
   {
-    school: 'Rutgers University',
-    period: 'Expected',
+    school: 'Rutgers University, Bloustein School',
+    period: 'Expected Dec 2026',
     lines: [
-      'Master of Public Informatics — GIS and spatial data analysis',
-      'Master of City Planning — environmental and climate change planning',
+      'Master of City and Regional Planning',
+      'Graduate Certificate in Geospatial Information Science and Technology',
     ],
   },
   {
-    school: 'Anna University',
-    period: '2016–2021',
-    lines: ['Bachelor of Architecture — architecture and urban design'],
+    school: 'Anna University, School of Architecture & Planning',
+    period: 'May 2021',
+    lines: ['Bachelor of Architecture, First Class'],
   },
 ];
 ---
 
 <BaseLayout
   title="About"
-  description="Geospatial data analyst and urban planner working on climate resilience, risk modeling, and spatial analysis in New Jersey and Chennai."
+  description="GIS specialist with 5+ years of Esri ArcGIS experience working on climate resilience, hazard mitigation, and spatial analysis in New Jersey and Chennai."
   path="/about/"
   image="/og/about.png"
   jsonLd={[personJsonLd()]}
@@ -76,7 +63,7 @@ const education = [
   <PageHeader
     eyebrow="About"
     title="I work between the map and the decision."
-    lead="Geospatial data analyst and urban planner with 3+ years of experience in climate resilience, risk modeling, and GIS-based hazard assessment — and a licensed architect, which is why the physical form of a place keeps showing up in the analysis."
+    lead="GIS specialist with 5+ years of hands-on Esri ArcGIS experience across the full geospatial data stack — and a licensed architect, which is why the physical form of a place keeps showing up in the analysis."
   />
 
   <div class="container-page layout">
@@ -89,12 +76,15 @@ const education = [
         the score with its drivers visible, the map that answers one stated question.
       </p>
       <p>
-        In Chennai I led hydrological GIS modeling for flood resilience, co-authored a sponge park
-        handbook that prioritised 1,000 sites through a spatial framework, and ran the analysis
-        behind mitigation strategies that lifted a 180-acre flood-prone area from 2-year to 5-year
-        return-period protection. At Rutgers CLiME I work on housing affordability and rent burden
-        across New Jersey, automating the extraction of certificates of occupancy, building permits,
-        and demographics so the analysis can be rerun rather than redone.
+        In Chennai I worked as an urban designer and policy advisor at Sponge Collaborative,
+        developing geospatial models that identified 1,000 candidate sponge-park sites and feeding
+        cost-benefit analysis behind $12M in implementation funding. At Rutgers CLiME I built
+        automated data pipelines that cut housing-data processing time by 60% and used ArcGIS to
+        visualize housing and homelessness disparities across New Jersey. Now, at the NJ Climate
+        Change Resource Center, I lead dataset and workflow development for statewide hazard
+        mitigation planning — digitizing Hazard Mitigation Plans across all 21 New Jersey counties
+        and running build-out analyses under multiple flood inundation scenarios to support
+        municipal Climate Change Hazard Vulnerability Assessments.
       </p>
       <p>
         The AI work grew out of frustration rather than enthusiasm. A language model will make you a

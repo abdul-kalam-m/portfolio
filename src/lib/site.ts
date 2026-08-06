@@ -19,11 +19,7 @@ export const OWNER = {
   name: 'Abdul Kalam',
   fullName: 'Abdul Kalam Azad Mustaq',
   role: 'Urbanist & geospatial analyst',
-  /*
-   * From OPERATING_GUIDE.md §0, which is canonical (§13.5.3 locks contact details).
-   * NOTE(owner): the résumé PDF lists abdulkalam.mustaq@rutgers.edu instead. One of the
-   * two should win site-wide — flagged rather than silently picked.
-   */
+  /* From OPERATING_GUIDE.md §0, canonical per §13.5.3. Confirmed by owner 2026-08-06. */
   email: 'ar.abdulkalam.mustaq@gmail.com',
   github: 'https://github.com/abdul-kalam-m',
   linkedin: 'https://www.linkedin.com/in/abdul-kalam-m',
@@ -39,11 +35,10 @@ export const NARRATIVE = {
 
 /** Résumé asset. Filename convention: AbdulKalam_Resume_YYYY-MM.pdf (§8.1). */
 export const RESUME = {
-  href: '/files/AbdulKalam_Resume_2025-03.pdf',
+  href: '/files/AbdulKalam_Resume_2026-08.pdf',
   label: 'Résumé (PDF, 2 pages)',
-  /* Source: "Analyst Resume_Abdul Kalam (2-Page).pdf". Planner and Transportation
-     Planner variants also exist — swapping is a one-file change (§13.5.7). */
-  variant: 'Analyst',
+  /* Owner-provided 2026-08-04, converted from AbdulKalam_Resume.docx (§13.5.7). */
+  variant: 'GIS Specialist',
 } as const;
 
 /** Absolute URL for a site-relative path. */
