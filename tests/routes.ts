@@ -23,7 +23,6 @@ export const ROUTES = [
   '/about/',
   '/resume/',
   '/contact/',
-  '/qr/',
   '/404.html',
 ] as const;
 

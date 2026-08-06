@@ -31,7 +31,6 @@ const PAGES = [
   '/projects/nj-parcel-flood-risk/index.html',
   '/about/index.html',
   '/resume/index.html',
-  '/qr/index.html',
 ];
 
 async function walk(dir) {

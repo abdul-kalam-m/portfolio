@@ -21,8 +21,10 @@ import sharp from 'sharp';
 const RENDER_DIR = 'C:/Users/abdul/AppData/Local/Temp/claude/pdf-render';
 const MAX_EDGE = 2400;
 const THUMB = { width: 1200, height: 630 };
+/** --color-bg (light). Card letterboxing should read as page, not as a grey box. */
+const PAPER = { r: 251, g: 250, b: 248 };
 
-/** @type {{slug: string, pages: {page: number, name: string}[], thumbFrom: number, thumbPosition?: string}[]} */
+/** @type {{slug: string, pages: {page: number, name: string}[], thumbFrom: number}[]} */
 const JOBS = [
   {
     slug: 'adyar-basin-vision-framework',
@@ -32,7 +34,6 @@ const JOBS = [
       { page: 3, name: 'infrastructure-risk.png' },
     ],
     thumbFrom: 5,
-    thumbPosition: 'centre',
   },
   {
     slug: 'woodbridge-flood-vulnerability',
@@ -41,7 +42,6 @@ const JOBS = [
       { page: 7, name: 'landuse-change.png' },
     ],
     thumbFrom: 6,
-    thumbPosition: 'top',
   },
   {
     slug: 'pedestrian-crash-rates-manhattan',
@@ -50,7 +50,6 @@ const JOBS = [
       { page: 9, name: 'collision-density.png' },
     ],
     thumbFrom: 10,
-    thumbPosition: 'top',
   },
   {
     slug: 'kosasthalaiyar-sponge-city',
@@ -59,7 +58,6 @@ const JOBS = [
       { page: 12, name: 'intervention-catalogue.png' },
     ],
     thumbFrom: 11,
-    thumbPosition: 'top',
   },
   {
     slug: 'tsuce-smart-urbanization',
@@ -69,7 +67,6 @@ const JOBS = [
       { page: 18, name: 'sustainability-metrics.png' },
     ],
     thumbFrom: 17,
-    thumbPosition: 'centre',
   },
   {
     slug: 'chennai-lakefront-restore-connect-engage',
@@ -78,7 +75,6 @@ const JOBS = [
       { page: 30, name: 'velachery-plan.png' },
     ],
     thumbFrom: 31,
-    thumbPosition: 'centre',
   },
 ];
 
@@ -101,13 +97,20 @@ async function run() {
       console.log(`  ${job.slug}/${name}`);
     }
 
+    /*
+     * `contain`, not `cover`. These pages are two-page spreads at roughly 2.4:1; covering
+     * them into the 1.905:1 card ratio crops ~21% of the width, which slices the outer
+     * panel off a three-panel board and cuts the caption column mid-sentence. Containing
+     * costs a thin paper-coloured band top and bottom and keeps the board whole.
+     */
     const thumbSrc = path.join(RENDER_DIR, `page${String(job.thumbFrom).padStart(2, '0')}.png`);
     const thumbOut = path.join(outDir, 'thumbnail.png');
     await sharp(thumbSrc)
-      .resize({ ...THUMB, fit: 'cover', position: job.thumbPosition ?? 'centre' })
+      .resize({ ...THUMB, fit: 'contain', background: PAPER })
+      .flatten({ background: PAPER })
       .png({ compressionLevel: 9 })
       .toFile(thumbOut);
-    console.log(`  ${job.slug}/thumbnail.png (1200x630)`);
+    console.log(`  ${job.slug}/thumbnail.png (1200x630, contained)`);
   }
 }
 

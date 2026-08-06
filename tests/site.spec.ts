@@ -66,7 +66,7 @@ test('no horizontal page scroll at any supported width', async ({ page }) => {
   // 320 is the floor, then the token breakpoints (§8.5).
   for (const width of [320, 375, 640, 768, 1024, 1440]) {
     await page.setViewportSize({ width, height: 900 });
-    for (const route of ['/', '/geospatial/', '/projects/autocarto-agent/', '/qr/']) {
+    for (const route of ['/', '/geospatial/', '/projects/autocarto-agent/', '/resume/']) {
       await page.goto(route);
       const overflow = await page.evaluate(
         () => document.documentElement.scrollWidth - document.documentElement.clientWidth

@@ -40,6 +40,6 @@ a `planned` project must carry a `plannedNote`, and every one of its stats must 
 ## Non-negotiable
 
 §13.5 lists what needs the owner's explicit approval (section names and slugs, published
-URLs, the narrative line, the stack, verified stats, résumé and bio facts, budgets,
+URLs, the narrative line, the stack, verified stats, resume and bio facts, budgets,
 third-party scripts). §13.6 lists what is prohibited outright — starting with fabricating
 statistics. A number that cannot be traced to a committed output does not ship.

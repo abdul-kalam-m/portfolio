@@ -126,6 +126,41 @@ extracts to 85 characters of unrelated labels). Those numbers were verified by d
 inspection of the rendered page at high resolution instead, and are cited with a page number
 in each figure's caption.
 
+## 2026-08-06 — Project pages have no separate hero image
+
+Every project page rendered `thumbnail` full-width above the body. Two problems, both
+reported by the owner: the thumbnail is a 1200×630 card crop, and the urban-design cards
+are two-page PDF spreads at roughly 2.4:1 — covering them into the card ratio sliced ~21%
+off the width, cutting the outer panel off a three-panel board and the caption column
+mid-sentence. And because every card is drawn from a page the body also shows in full,
+every project opened with a cropped duplicate of a figure that appeared intact a screen
+later.
+
+The hero block is removed. The first figure in the body is the hero (§3.1); `thumbnail` is
+now only the card and og:image. Urban-design thumbnails are additionally generated with
+`fit: contain` on the paper background rather than `fit: cover`, so the card shows the whole
+board with a thin letterbox instead of a cropped one.
+
+## 2026-08-06 — The `/qr/` hub page is removed (owner request)
+
+§9.3 specifies a `/qr/` hub listing every project's code for in-person display and print.
+The owner asked for it to go: "Do not need a separate section for the QR Codes, integrate it
+as at the bottom of the appropriate project." Every project page already carries a `QRShare`
+block at the bottom (§9.2), which is what the owner wanted, so nothing was lost there.
+
+Removed: `src/pages/qr/index.astro`, the footer link, the `qr` OG card, and the route from
+the test and budget lists. **Kept:** `src/pages/qr/[slug].svg.ts`, which still generates a
+downloadable level-Q SVG per project plus the site root and resume (§9.1) — `QRShare`'s
+download link depends on it. The print stylesheet that existed only for the hub went with
+the page.
+
+## 2026-08-06 — "Résumé" is spelled "Resume" site-wide (owner request)
+
+The owner asked for the unaccented spelling everywhere. Applied to all user-facing text
+(nav, footer, byline, page title and headings, download button, OG card) and to code
+comments for consistency. §8.1's filename convention is unaffected — the PDF was already
+`AbdulKalam_Resume_YYYY-MM.pdf`.
+
 ## 2026-08-06 — The Drive staging scaffold is abandoned, not migrated
 
 `…\3. PORTFOLIO WEBSITE\Portfolio Projects\portfolio-staging\` is a stock

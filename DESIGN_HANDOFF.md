@@ -101,7 +101,7 @@ And these are prohibitions:
 ### Off-limits without the owner's sign-off (§13.5)
 
 Section names, their order, and their slugs. Published project slugs. The narrative line.
-The tech stack. Any verified statistic. Résumé and bio facts. The performance and
+The tech stack. Any verified statistic. Resume and bio facts. The performance and
 accessibility budgets — they may be tightened, never loosened.
 
 You can restyle the section cards freely; you cannot rename "Geospatial Intelligence" or
@@ -172,17 +172,17 @@ the built site.
 
 ### Pages
 
-`/` · `/geospatial/` · `/data-ai/` · `/urban-design/` · `/projects/<slug>/` × 6 ·
-`/about/` · `/resume/` · `/contact/` · `/qr/` · `/404` · `/labs/heat-dashboard/`
+`/` · `/geospatial/` · `/data-ai/` · `/urban-design/` · `/projects/<slug>/` × 12 ·
+`/about/` · `/resume/` · `/contact/` · `/404` · `/labs/heat-dashboard/`
 
-Two states worth knowing about:
+Two things worth knowing about:
 
-- **`/urban-design/` has no projects.** Publishing that section needs the owner to approve a
-  candidate list first (`docs/urban-design-candidates.md`). It currently ships a designed
-  "in preparation" state, which is a real design surface, not a placeholder to delete.
-- **`/qr/`** has a print stylesheet: black on white, site chrome hidden, three columns. The
-  owner opens it to show a code in person and prints it for posters. Any restyle has to
-  survive `Ctrl+P`.
+- **Project pages have no separate hero image.** `thumbnail` is the card and og:image only;
+  the first `Figure` in the MDX body is the hero. Reintroducing a hero would reintroduce a
+  cropped duplicate of it — see DECISIONS.md.
+- **There is no `/qr/` hub.** Each project page carries a `QRShare` block at the bottom
+  instead, with a build-time level-Q SVG served from `/qr/<slug>.svg`. That block is the
+  whole QR surface now, so it has to hold up on its own.
 
 ---
 

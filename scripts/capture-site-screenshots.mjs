@@ -30,7 +30,6 @@ const ROUTES = [
   ['about', '/about/'],
   ['resume', '/resume/'],
   ['contact', '/contact/'],
-  ['qr', '/qr/'],
 ];
 
 const VIEWS = [

@@ -1,5 +1,5 @@
 ---
-import { Image, getImage } from 'astro:assets';
+import { getImage } from 'astro:assets';
 import BaseLayout from './BaseLayout.astro';
 import Breadcrumb from '../components/Breadcrumb.astro';
 import ImpactStrip from '../components/ImpactStrip.astro';
@@ -135,23 +135,13 @@ const jsonLd = [
 
     {
       /*
-       * Planned projects use their card art as the og:image but not as a page hero: the
-       * body already opens with the same architecture at full detail, and showing a
-       * reduced copy of it directly above the readable one is noise, not a hero (§3.1).
-       */
-      data.status !== 'planned' && (
-        <div class="container-page hero">
-          <Image
-            src={data.thumbnail}
-            alt={data.thumbnailAlt}
-            width={1600}
-            densities={[1, 2]}
-            loading="eager"
-            fetchpriority="high"
-            class="hero-image"
-          />
-        </div>
-      )
+      No separate hero image. `thumbnail` is a 1200x630 card crop — cropping a wide
+      figure to that ratio cuts the outer panels off a multi-panel board, and every
+      project's card is drawn from a figure the body already shows in full. Rendering it
+      above the body meant every page opened with a cropped duplicate of a figure that
+      appears intact a screen later. The first figure in the body is the hero (§3.1);
+      `thumbnail` is now only the card and og:image.
+    */
     }
 
     <div class="container-page body">
@@ -263,21 +253,8 @@ const jsonLd = [
     margin-top: var(--space-8);
   }
 
-  .hero {
-    margin-top: var(--space-8);
-  }
-
-  .hero-image {
-    width: 100%;
-    height: auto;
-    border: 1px solid var(--color-border);
-    border-radius: var(--radius-card);
-    box-shadow: var(--shadow-card);
-    background-color: var(--color-surface);
-  }
-
   .body {
-    margin-top: var(--space-12);
+    margin-top: var(--space-10);
   }
 
   @media (min-width: 48rem) {

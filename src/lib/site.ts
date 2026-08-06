@@ -33,10 +33,10 @@ export const NARRATIVE = {
   body: 'From flood-finance atlases and heat dashboards to AI agents that make maps, my work connects spatial analysis, reproducible data pipelines, and urban design into evidence people can act on.',
 } as const;
 
-/** Résumé asset. Filename convention: AbdulKalam_Resume_YYYY-MM.pdf (§8.1). */
+/** Resume asset. Filename convention: AbdulKalam_Resume_YYYY-MM.pdf (§8.1). */
 export const RESUME = {
   href: '/files/AbdulKalam_Resume_2026-08.pdf',
-  label: 'Résumé (PDF, 2 pages)',
+  label: 'Resume (PDF, 2 pages)',
   /* Owner-provided 2026-08-04, converted from AbdulKalam_Resume.docx (§13.5.7). */
   variant: 'GIS Specialist',
 } as const;

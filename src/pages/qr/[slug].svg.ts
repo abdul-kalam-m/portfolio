@@ -3,7 +3,7 @@ import { getProjects, projectHref } from '../../lib/projects';
 import { qrSvgForPath } from '../../lib/qr';
 
 /**
- * One downloadable SVG QR per project page, plus the site root and the résumé (§9.1).
+ * One downloadable SVG QR per project page, plus the site root and the resume (§9.1).
  * Generated at build time and served from /qr/<slug>.svg.
  */
 

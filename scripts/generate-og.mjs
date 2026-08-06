@@ -3,7 +3,7 @@
  *
  * Project pages use their own thumbnail as og:image, per OPERATING_GUIDE.md §8.2 — this
  * script covers the pages that have no thumbnail of their own: home, the three section
- * indexes, about, résumé, contact, and the QR hub.
+ * indexes, about, resume, and contact.
  *
  * Rendered through Playwright rather than composed with sharp, so the cards use the same
  * self-hosted Inter that the site does and stay identical across machines.
@@ -64,7 +64,7 @@ const CARDS = [
   },
   {
     name: 'resume',
-    eyebrow: 'Résumé · Abdul Kalam',
+    eyebrow: 'Resume · Abdul Kalam',
     title: 'Geospatial data analyst and urbanist',
     sub: 'Rutgers CLiME · Sponge Collaborative · licensed architect, Council of Architecture',
   },
@@ -73,12 +73,6 @@ const CARDS = [
     eyebrow: 'Contact · Abdul Kalam',
     title: 'Get in touch',
     sub: 'ar.abdulkalam.mustaq@gmail.com · New Brunswick, New Jersey',
-  },
-  {
-    name: 'qr',
-    eyebrow: 'Share · Abdul Kalam',
-    title: 'QR codes',
-    sub: 'A scannable code for every page, printable black on white',
   },
 ];
 
